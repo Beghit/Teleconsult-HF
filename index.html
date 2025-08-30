@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HeartGuardian – Télésurveillance Cardiaque</title>
+  <meta name="description" content="Application de télésurveillance cardiaque pour patients insuffisants cardiaques" />
+  <meta name="theme-color" content="#0c4da1" />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #1a56db;
+      --primary-dark: #0c4da1;
+      --secondary: #0ea5e9;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #e53e3e;
+      --dark: #0f172a;
+      --darker: #0b1220;
+      --light: #f8fafc;
+      --muted: #94a3b8;
+      --card-bg: #ffffff;
+      --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+      --border: #e2e8f0;
+      --input-bg: #ffffff;
+      --gradient: linear-gradient(135deg, #1a56db 0%, #0c4da1 100%);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: #f1f5f9;
+      color: #334155;
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 0;
+      transition: all 0.3s ease;
+    }
+
+    body[dir="rtl"] {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      margin-bottom: 1.5rem;
+      animation: slideInDown 0.5s ease-out;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      background: var(--gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 6px rgba(26, 86, 219, 0.3);
+      animation: pulse 2s infinite;
+    }
+    
+    .logo-text {
+      font-weight: 800;
+      font-size: 1.8rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .logo-subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Language Toggle */
+    .language-toggle {
+      display: flex;
+      align-items: center;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 0.25rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+    }
+
+    .language-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 16px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .language-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 2px 4px rgba(26, 86, 219, 0.2);
+    }
+    
+    /* Navigation */
+    nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      background: white;
+      border-radius: 12px;
+      padding: 0.5rem;
+      box-shadow: var(--card-shadow);
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    .nav-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .nav-btn:hover {
+      background: rgba(26, 86, 219, 0.05);
+      transform: translateY(-2px);
+    }
+    
+    .nav-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 6px rgba(26, 86, 219, 0.2);
+      animation: bounce 0.5s;
+    }
+    
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      animation: fadeInUp 0.5s ease-out;
+    }
+    
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background: var(--gradient);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(26, 86, 219, 0.25);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(26, 86, 219, 0.05);
+      transform: translateY(-2px);
+    }
+    
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.75rem;
+      color: #334155;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      background: var(--input-bg);
+      color: #334155;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.2);
+      transform: scale(1.01);
+    }
+    
+    /* Status indicators - Enhanced with animations */
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: fadeIn 0.5s;
+    }
+    
+    .status-green {
+      background: rgba(16, 185, 129, 0.15);
+      color: #047857;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+    }
+    
+    .status-yellow {
+      background: rgba(245, 158, 11, 0.15);
+      color: #b45309;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
+      animation: pulseWarning 2s infinite;
+    }
+    
+    .status-red {
+      background: rgba(229, 62, 62, 0.15);
+      color: #991b1b;
+      border: 1px solid rgba(229, 62, 62, 0.3);
+      box-shadow: 0 2px 4px rgba(229, 62, 62, 0.1);
+      animation: pulseDanger 1.5s infinite;
+    }
+    
+    /* Status legend */
+    .status-legend {
+      display: flex;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+    }
+    
+    .status-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+    
+    .status-legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+    }
+    
+    /* Reference boxes */
+    .reference-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .reference-box {
+      background: rgba(26, 86, 219, 0.05);
+      border: 2px dashed var(--primary);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    .reference-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .reference-label {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    
+    /* Check-in history */
+    .checkin-item {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.2s ease;
+      animation: slideInRight 0.5s ease-out;
+    }
+    
+    .checkin-item:hover {
+      background: #f8fafc;
+      transform: translateX(5px);
+    }
+    
+    .checkin-item:last-child {
+      border-bottom: none;
+    }
+    
+    .checkin-date {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .checkin-details {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    
+    .checkin-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    
+    .checkin-label {
+      font-size: 0.875rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Recommendations */
+    .recommendation {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      box-shadow: var(--card-shadow);
+      border-left: 4px solid var(--primary);
+      animation: slideInLeft 0.5s ease-out;
+    }
+
+    .recommendation-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .recommendation-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+    
+    .recommendation-title {
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    
+    /* Symptoms selector */
+    .symptoms-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .symptom-checkbox {
+      display: none;
+    }
+    
+    .symptom-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .symptom-checkbox:checked + .symptom-label {
+      border-color: var(--primary);
+      background: rgba(26, 86, 219, 0.05);
+      transform: scale(1.02);
+      box-shadow: 0 4px 8px rgba(26, 86, 219, 0.1);
+    }
+    
+    .symptom-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+    
+    /* Alert Box */
+    .alert-box {
+      background: rgba(229, 62, 62, 0.05);
+      border: 1px solid var(--danger);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      animation: shake 0.5s ease-in-out;
+    }
+
+    .alert-icon {
+      font-size: 2rem;
+      color: var(--danger);
+    }
+    
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--success);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 1000;
+      animation: slideInRight 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+      animation: zoomIn 0.3s ease-out;
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--border);
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    /* Utilities */
+    .hidden {
+      display: none !important;
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+    
+    .text-muted {
+      color: var(--muted);
+    }
+    
+    .mt-1 {
+      margin-top: 0.5rem;
+    }
+    
+    .mt-2 {
+      margin-top: 1rem;
+    }
+    
+    .mt-3 {
+      margin-top: 1.5rem;
+    }
+    
+    .mb-1 {
+      margin-bottom: 0.5rem;
+    }
+    
+    .mb-2 {
+      margin-bottom: 1rem;
+    }
+    
+    .mb-3 {
+      margin-bottom: 1.5rem;
+    }
+
+    /* RTL Support */
+    body[dir="rtl"] .recommendation {
+      border-left: none;
+      border-right: 4px solid var(--primary);
+    }
+
+    body[dir="rtl"] .logo {
+      text-align: right;
+    }
+
+    body[dir="rtl"] .checkin-details,
+    body[dir="rtl"] .card-header {
+      text-align: right;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes pulseWarning {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+    
+    @keyframes pulseDanger {
+      0% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(229, 62, 62, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; visibility: hidden; }
+    }
+    
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .checkin-details {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      nav {
+        flex-wrap: wrap;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .language-toggle {
+        margin-top: 1rem;
+      }
+      
+      .symptoms-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .status-legend {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .reference-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-heart-pulse"></i></div>
+        <div>
+          <div class="logo-text" data-i18n="appName">HeartGuardian</div>
+          <div class="logo-subtitle" data-i18n="appSubtitle">Télésurveillance Cardiaque</div>
+        </div>
+      </div>
+      <div class="language-toggle">
+        <button class="language-btn active" data-lang="fr" aria-label="Changer la langue en français"><i class="fas fa-language"></i> FR</button>
+        <button class="language-btn" data-lang="ar" aria-label="Changer la langue en arabe"><i class="fas fa-language"></i> AR</button>
+      </div>
+    </header>
+
+    <nav>
+      <button class="nav-btn active" data-panel="checkin"><i class="fas fa-plus-circle"></i> <span data-i18n="newCheckin">Nouveau Suivi</span></button>
+      <button class="nav-btn" data-panel="history"><i class="fas fa-history"></i> <span data-i18n="history">Historique</span></button>
+      <button class="nav-btn" data-panel="recommendations"><i class="fas fa-comment-medical"></i> <span data-i18n="recommendations">Recommandations</span></button>
+    </nav>
+
+    <!-- Reference Boxes -->
+    <div class="reference-container">
+      <div class="reference-box">
+        <div>
+          <div class="reference-label" data-i18n="referenceWeight">Poids de référence</div>
+          <div class="reference-value" id="reference-weight-value">72.5 kg</div>
+        </div>
+        <button class="btn btn-secondary" id="set-weight-reference-btn" aria-label="Définir le poids de référence"><i class="fas fa-edit"></i> <span data-i18n="setReference">Définir</span></button>
+      </div>
+      
+      <div class="reference-box">
+        <div>
+          <div class="reference-label" data-i18n="referenceBloodPressure">Pression artérielle de référence</div>
+          <div class="reference-value" id="reference-bp-value">120/80 mmHg</div>
+        </div>
+        <button class="btn btn-secondary" id="set-bp-reference-btn" aria-label="Définir la pression artérielle de référence"><i class="fas fa-edit"></i> <span data-i18n="setReference">Définir</span></button>
+      </div>
+    </div>
+
+    <!-- Status Legend -->
+    <div class="status-legend">
+      <div class="status-legend-item">
+        <div class="status-legend-color" style="background-color: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3);"></div>
+        <span data-i18n="normalStatus">Normal - Tension et fréquence cardiaque dans les limites normales</span>
+      </div>
+      <div class="status-legend-item">
+        <div class="status-legend-color" style="background-color: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3);"></div>
+        <span data-i18n="attentionStatus">Attention - Valeurs nécessitant une surveillance</span>
+      </div>
+      <div class="status-legend-item">
+        <div class="status-legend-color" style="background-color: rgba(229, 62, 62, 0.15); border: 1px solid rgba(229, 62, 62, 0.3);"></div>
+        <span data-i18n="warningStatus">Alerte - Valeurs critiques nécessitant une attention médicale</span>
+      </div>
+    </div>
+
+    <!-- Panel Nouveau Suivi -->
+    <section id="checkin-panel" class="card">
+      <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-heartbeat"></i> <span data-i18n="newMedicalCheck">Nouveau Suivi Médical</span></h2>
+      </div>
+      <p class="text-muted" data-i18n="enterTodayMeasurements">Veuillez saisir vos mesures du jour</p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+        <div class="form-group">
+          <label for="weight"><i class="fas fa-weight"></i> <span data-i18n="weight">Poids (kg)</span></label>
+          <input id="weight" type="number" step="0.1" placeholder="Ex: 72.5" aria-label="Poids en kilogrammes" />
+        </div>
+        
+        <div class="form-group">
+          <label for="blood-pressure"><i class="fas fa-tachometer-alt"></i> <span data-i18n="bloodPressure">Tension artérielle</span></label>
+          <input id="blood-pressure" placeholder="Ex: 120/80" aria-label="Tension artérielle format systolique/diastolique" />
+        </div>
+        
+        <div class="form-group">
+          <label for="heart-rate"><i class="fas fa-heart"></i> <span data-i18n="heartRate">Fréquence cardiaque (bpm)</span></label>
+          <input id="heart-rate" type="number" placeholder="Ex: 75" aria-label="Fréquence cardiaque en battements par minute" />
+        </div>
+        
+        <div class="form-group">
+          <label for="oxygen"><i class="fas fa-lungs"></i> <span data-i18n="oxygen">Saturation en O₂ (%)</span></label>
+          <input id="oxygen" type="number" placeholder="Ex: 98" min="80" max="100" aria-label="Saturation en oxygène en pourcentage" />
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="symptoms"><i class="fas fa-stethoscope"></i> <span data-i18n="symptoms">Symptômes de surcharge liquidienne</span></label>
+        
+        <div class="symptoms-grid">
+          <input type="checkbox" id="symptom1" class="symptom-checkbox" value="essouflement">
+          <label for="symptom1" class="symptom-label">
+            <span class="symptom-icon"><i class="fas fa-wind"></i></span>
+            <span data-i18n="symptom1">Essoufflement</span>
+          </label>
+          
+          <input type="checkbox" id="symptom2" class="symptom-checkbox" value="oedeme">
+          <label for="symptom2" class="symptom-label">
+            <span class="symptom-icon"><i class="fas fa-shoe-prints"></i></span>
+            <span data-i18n="symptom2">Œdème des jambes</span>
+          </label>
+          
+          <input type="checkbox" id="symptom3" class="symptom-checkbox" value="fatigue">
+          <label for="symptom3" class="symptom-label">
+            <span class="symptom-icon"><i class="fas fa-tired"></i></span>
+            <span data-i18n="symptom3">Fatigue importante</span>
+          </label>
+          
+          <input type="checkbox" id="symptom4" class="symptom-checkbox" value="prise-poids">
+          <label for="symptom4" class="symptom-label">
+            <span class="symptom-icon"><i class="fas fa-weight"></i></span>
+            <span data-i18n="symptom4">Prise de poids rapide</span>
+          </label>
+          
+          <input type="checkbox" id="symptom5" class="symptom-checkbox" value="toux">
+          <label for="symptom5" class="symptom-label">
+            <span class="symptom-icon"><i class="fas fa-lungs-virus"></i></span>
+            <span data-i18n="symptom5">Toux sèche</span>
+          </label>
+          
+          <input type="checkbox" id="symptom6" class="symptom-checkbox" value="orthopnee">
+          <label for="symptom6" class="symptom-label">
+            <span class="symptom-icon"><i class="fas fa-bed"></i></span>
+            <span data-i18n="symptom6">Difficulté à respirer allongé</span>
+          </label>
+        </div>
+      </div>
+      
+      <button id="submit-checkin" class="btn btn-primary" style="width: 100%" aria-label="Envoyer le suivi médical"><i class="fas fa-paper-plane"></i> <span data-i18n="submitCheckin">Envoyer le suivi</span></button>
+    </section>
+
+    <!-- Panel Historique -->
+    <section id="history-panel" class="card hidden">
+      <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-history"></i> <span data-i18n="checkinHistory">Historique des Suivis</span></h2>
+      </div>
+      <p class="text-muted" data-i18n="yourHealthRecords">Vos derniers enregistrements de santé</p>
+      
+      <div id="checkin-history" class="mt-2">
+        <!-- L'historique sera généré dynamiquement -->
+      </div>
+    </section>
+
+    <!-- Panel Recommandations -->
+    <section id="recommendations-panel" class="card hidden">
+      <div class="card-header">
+        <h2 class="card-title"><i class="fas fa-comment-medical"></i> <span data-i18n="personalizedRecommendations">Recommandations Personnalisées</span></h2>
+      </div>
+      <p class="text-muted" data-i18n="basedOnYourData">Basé sur vos données de santé</p>
+      
+      <div id="recommendations-content" class="mt-2">
+        <!-- Les recommandations seront générées dynamiquement -->
+      </div>
+    </section>
+
+    <footer>
+      <p data-i18n="medicalDeviceWarning">⚠️ Dispositif médical. En cas de symptômes graves, consultez immédiatement un médecin.</p>
+      <p class="mt-1">HeartGuardian &copy; 2025 | Télésurveillance Cardiaque</p>
+    </footer>
+  </div>
+
+  <script>
+    // ===== CONFIGURATION DES LANGUES =====
+    const translations = {
+      fr: {
+        appName: "HeartGuardian",
+        appSubtitle: "Télésurveillance Cardiaque",
+        newCheckin: "Nouveau Suivi",
+        history: "Historique",
+        recommendations: "Recommandations",
+        newMedicalCheck: "Nouveau Suivi Médical",
+        enterTodayMeasurements: "Veuillez saisir vos mesures du jour",
+        weight: "Poids (kg)",
+        bloodPressure: "Tension artérielle",
+        heartRate: "Fréquence cardiaque (bpm)",
+        oxygen: "Saturation en O₂ (%)",
+        symptoms: "Symptômes de surcharge liquidienne",
+        symptom1: "Essoufflement",
+        symptom2: "Œdème des jambes",
+        symptom3: "Fatigue importante",
+        symptom4: "Prise de poids rapide",
+        symptom5: "Toux sèche",
+        symptom6: "Difficulté à respirer allongé",
+        submitCheckin: "Envoyer le suivi",
+        checkinHistory: "Historique des Suivis",
+        yourHealthRecords: "Vos derniers enregistrements de santé",
+        personalizedRecommendations: "Recommandations Personnalisées",
+        basedOnYourData: "Basé sur vos données de santé",
+        medicalDeviceWarning: "⚠️ Dispositif médical. En cas de symptômes graves, consultez immédiatement un médecin.",
+        today: "Aujourd'hui",
+        yesterday: "Hier",
+        normal: "NORMAL",
+        attention: "ATTENTION",
+        warning: "ALERTE",
+        noData: "Aucune donnée enregistrée pour le moment.",
+        referenceWeight: "Poids de référence",
+        referenceBloodPressure: "Pression artérielle de référence",
+        setReference: "Définir",
+        recommendationTitle: "Recommandation",
+        systolicWarning: "Votre tension systolique est élevée",
+        systolicAdvice: "Réduisez votre consommation de sel, faites de l'exercice modéré et consultez votre médecin si cela persiste.",
+        diastolicWarning: "Votre tension diastolique est élevée",
+        diastolicAdvice: "Évitez le stress, pratiquez la relaxation et surveillez régulièrement votre tension.",
+        heartRateWarning: "Votre fréquence cardiaque est élevée",
+        heartRateAdvice: "Évitez la caféine, pratiquez des exercices de respiration profonde et assurez-vous un sommeil suffisant.",
+        lowHeartRateWarning: "Votre fréquence cardiaque est basse",
+        lowHeartRateAdvice: "Si vous vous sentez faible ou étourdi, consultez votre médecin.",
+        oxygenWarning: "Votre saturation en oxygène est basse",
+        oxygenAdvice: "Assurez-vous d'avoir une bonne ventilation et consultez un médecin si cela persiste.",
+        weightGainWarning: "Prise de poids détectée",
+        weightGainAdvice: "Surveillez votre alimentation et votre consommation de liquides. Contactez votre médecin si la prise de poids se poursuit.",
+        weightLossWarning: "Perte de poids détectée",
+        weightLossAdvice: "Assurez-vous de maintenir une alimentation équilibrée et hydratez-vous suffisamment.",
+        noRecommendations: "Aucune recommandation spécifique pour le moment. Continuez à surveiller vos indicateurs régulièrement.",
+        consultDoctor: "Consultez rapidement un médecin",
+        emergencyAdvice: "Vos valeurs sont préoccupantes. Veuillez contacter un professionnel de santé rapidement.",
+        symptomsPresent: "Symptômes détectés",
+        symptomsAdvice: "La présence de ces symptômes nécessite une attention particulière. Contactez votre médecin si ils persistent.",
+        normalStatus: "Normal - Tension et fréquence cardiaque dans les limites normales",
+        attentionStatus: "Attention - Valeurs nécessitant une surveillance",
+        warningStatus: "Alerte - Valeurs critiques nécessitant une attention médicale",
+        checkinSuccess: "Suivi enregistré avec succès",
+        hypotensionWarning: "Votre tension artérielle est basse",
+        hypotensionAdvice: "Assurez-vous de vous hydrater correctement et évitez les changements de position brusques. Consultez si vous avez des vertiges.",
+        lowOxygenWarning: "Votre saturation en oxygène est basse",
+        lowOxygenAdvice: "Asseyez-vous droit, pratiquez des exercices de respiration profonde. Consultez un médecin si cela persiste.",
+        severeSymptomsWarning: "Symptômes sévères détectés",
+        severeSymptomsAdvice: "Ces symptômes nécessitent une consultation médicale urgente. Contactez votre médecin ou les urgences."
+      },
+      ar: {
+        appName: "حارس القلب",
+        appSubtitle: "مراقبة القلب عن بعد",
+        newCheckin: "متابعة جديدة",
+        history: "السجل",
+        recommendations: "التوصيات",
+        newMedicalCheck: "متابعة طبية جديدة",
+        enterTodayMeasurements: "يرجى إدخال قياسات اليوم",
+        weight: "الوزن (كجم)",
+        bloodPressure: "ضغط الدم",
+        heartRate: "معدل ضربات القلب (دقة/دقيقة)",
+        oxygen: "تشبع الأكسجين (%)",
+        symptoms: "أعراض زيادة السوائل",
+        symptom1: "ضيق في التنفس",
+        symptom2: "وذمة الساقين",
+        symptom3: "إرهاق شديد",
+        symptom4: "زيادة سريعة في الوزن",
+        symptom5: "سعال جاف",
+        symptom6: "صعوبة التنفس عند الاستلقاء",
+        submitCheckin: "إرسال المتابعة",
+        checkinHistory: "سجل المتابعات",
+        yourHealthRecords: "آخر تسجيلاتك الصحية",
+        personalizedRecommendations: "توصيات مخصصة",
+        basedOnYourData: "بناءً على بياناتك الصحية",
+        medicalDeviceWarning: "⚠️ جهاز طبي. في حالة ظهور أعراض خطيرة، استشر الطبيب على الفور.",
+        today: "اليوم",
+        yesterday: "أمس",
+        normal: "طبيعي",
+        attention: "انتباه",
+        warning: "تحذير",
+        noData: "لا توجد بيانات مسجلة حتى الآن.",
+        referenceWeight: "الوزن المرجعي",
+        referenceBloodPressure: "ضغط الدم المرجعي",
+        setReference: "تعيين",
+        recommendationTitle: "توصية",
+        systolicWarning: "ضغط الدم الانقباضي مرتفع",
+        systolicAdvice: "قلل من تناول الملح، مارس تمارين معتدلة واستشر طبيبك إذا استمر ذلك.",
+        diastolicWarning: "ضغط الدم الانبساطي مرتفع",
+        diastolicAdvice: "تجنب التوتر، مارس الاسترخاء وراقب ضغطك بانتظام.",
+        heartRateWarning: "معدل ضربات القلب مرتفع",
+        heartRateAdvice: "تجنب الكافيين، مارس تمارين التنفس العميق وتأكد من الحصول على قسط كافٍ من النوم.",
+        lowHeartRateWarning: "معدل ضربات القلب منخفض",
+        lowHeartRateAdvice: "إذا كنت تشعر بالضعف أو الدوار، استشر طبيبك.",
+        oxygenWarning: "تشبع الأكسجين منخفض",
+        oxygenAdvice: "تأكد من التهوية الجيدة واستشر الطبيب если استمر ذلك.",
+        weightGainWarning: "تم اكتشاف زيادة في الوزن",
+        weightGainAdvice: "راقب نظامك الغذائي واستهلاك السوائل. اتصل بطبيبك إذا استمرت زيادة الوزن.",
+        weightLossWarning: "تم اكتشاف فقدان الوزن",
+        weightLossAdvice: "تأكد من الحفاظ على نظام غذائي متوازن والترطيب الكافي.",
+        noRecommendations: "لا توجد توصيات محددة في الوقت الحالي. استمر في مراقبة مؤشراتك بانتظام.",
+        consultDoctor: "استشر طبيبًا في أسرع وقت",
+        emergencyAdvice: "قيمك الصحية مقلقة. يرجى الاتصال بأخصائي الرعاية الصحية في أسرع وقت ممكن.",
+        symptomsPresent: "تم اكتشاف أعراض",
+        symptomsAdvice: "وجود هذه الأعراض يتطلب اهتمامًا خاصًا. اتصل بطبيبك إذا استمرت.",
+        normalStatus: "طبيعي - ضغط الدم ومعدل ضربات القلب ضمن الحدود الطبيعية",
+        attentionStatus: "انتباه - قيم تتطلب المراقبة",
+        warningStatus: "تحذير - قيم حرجة تتطلب عناية طبية",
+        checkinSuccess: "تم تسجيل المتابعة بنجاح",
+        hypotensionWarning: "ضغط الدم منخفض",
+        hypotensionAdvice: "تأكد من ترطيب جسمك بشكل صحيح وتجنب تغيير الوضعيات بشكل مفاجئ. استشر الطبيب إذا شعرت بالدوار.",
+        lowOxygenWarning: "تشبع الأكسجين منخفض",
+        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب إذا استمر ذلك.",
+        severeSymptomsWarning: "تم اكتشاف أعراض شديدة",
+        severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ."
+      }
+    };
+
+    // ===== GESTIONNAIRE D'ÉTAT =====
+    const AppState = {
+      currentLanguage: 'fr',
+      checkins: [],
+      referenceWeight: null,
+      referenceBloodPressure: { systolic: 120, diastolic: 80 },
+
+      init() {
+        this.loadData();
+        this.setupEventListeners();
+        this.renderCheckinHistory();
+        this.generateRecommendations();
+        this.updateReferenceDisplay();
+        this.registerServiceWorker();
+      },
+
+      loadData() {
+        const savedCheckins = localStorage.getItem('heartGuardianCheckins');
+        this.checkins = savedCheckins ? JSON.parse(savedCheckins) : [];
+        
+        const savedReferenceWeight = localStorage.getItem('heartGuardianReferenceWeight');
+        this.referenceWeight = savedReferenceWeight ? parseFloat(savedReferenceWeight) : null;
+        
+        const savedReferenceBP = localStorage.getItem('heartGuardianReferenceBP');
+        this.referenceBloodPressure = savedReferenceBP ? JSON.parse(savedReferenceBP) : { systolic: 120, diastolic: 80 };
+      },
+
+      saveData() {
+        localStorage.setItem('heartGuardianCheckins', JSON.stringify(this.checkins));
+        if (this.referenceWeight) {
+          localStorage.setItem('heartGuardianReferenceWeight', this.referenceWeight);
+        }
+        localStorage.setItem('heartGuardianReferenceBP', JSON.stringify(this.referenceBloodPressure));
+      },
+
+      setReferenceWeight(weight) {
+        this.referenceWeight = parseFloat(weight);
+        this.saveData();
+        this.updateReferenceDisplay();
+      },
+      
+      setReferenceBloodPressure(systolic, diastolic) {
+        this.referenceBloodPressure = { systolic: parseInt(systolic), diastolic: parseInt(diastolic) };
+        this.saveData();
+        this.updateReferenceDisplay();
+      },
+
+      updateReferenceDisplay() {
+        const weightElement = document.getElementById('reference-weight-value');
+        if (weightElement && this.referenceWeight) {
+          weightElement.textContent = `${this.referenceWeight} kg`;
+        }
+        
+        const bpElement = document.getElementById('reference-bp-value');
+        if (bpElement && this.referenceBloodPressure) {
+          bpElement.textContent = `${this.referenceBloodPressure.systolic}/${this.referenceBloodPressure.diastolic} mmHg`;
+        }
+      },
+
+      addCheckin(checkinData) {
+        const newCheckin = {
+          ...checkinData,
+          id: Date.now(),
+          date: new Date().toISOString()
+        };
+        
+        this.checkins.unshift(newCheckin);
+        this.saveData();
+        this.renderCheckinHistory();
+        this.generateRecommendations();
+        
+        // Afficher une notification de succès
+        this.showNotification(translations[this.currentLanguage].checkinSuccess, 'success');
+        
+        // Afficher le panneau des recommandations après l'envoi
+        setTimeout(() => {
+          this.showPanel('recommendations');
+        }, 1000);
+      },
+
+      setupEventListeners() {
+        // Navigation entre les panneaux
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const panel = btn.getAttribute('data-panel');
+            this.showPanel(panel);
+          });
+        });
+
+        // Envoi du formulaire
+        document.getElementById('submit-checkin').addEventListener('click', () => {
+          this.submitCheckin();
+        });
+
+        // Définir le poids de référence
+        document.getElementById('set-weight-reference-btn').addEventListener('click', () => {
+          this.showReferenceWeightModal();
+        });
+        
+        // Définir la pression artérielle de référence
+        document.getElementById('set-bp-reference-btn').addEventListener('click', () => {
+          this.showReferenceBPModal();
+        });
+
+        // Changement de langue
+        document.querySelectorAll('.language-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+            this.changeLanguage(lang);
+          });
+        });
+      },
+
+      showReferenceWeightModal() {
+        const modalHtml = `
+          <div class="modal-overlay" id="reference-modal">
+            <div class="modal">
+              <div class="modal-header">
+                <h3>${this.currentLanguage === 'fr' ? 'Définir le poids de référence' : 'تعيين الوزن المرجعي'}</h3>
+                <button class="modal-close">&times;</button>
+              </div>
+              <div class="form-group">
+                <label for="reference-weight-input">${this.currentLanguage === 'fr' ? 'Poids (kg)' : 'الوزن (كجم)'}</label>
+                <input type="number" step="0.1" id="reference-weight-input" value="${this.referenceWeight || ''}" />
+              </div>
+              <button class="btn btn-primary" id="save-reference-btn" style="width: 100%">
+                ${this.currentLanguage === 'fr' ? 'Enregistrer' : 'حفظ'}
+              </button>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Ajouter les écouteurs d'événements pour la modale
+        document.getElementById('save-reference-btn').addEventListener('click', () => {
+          const weight = document.getElementById('reference-weight-input').value;
+          if (weight && !isNaN(parseFloat(weight))) {
+            this.setReferenceWeight(weight);
+            this.hideModal();
+            this.showNotification(
+              this.currentLanguage === 'fr' 
+                ? 'Poids de référence enregistré avec succès!' 
+                : 'تم حفظ الوزن المرجعي بنجاح!',
+              'success'
+            );
+          }
+        });
+        
+        document.querySelector('.modal-close').addEventListener('click', () => {
+          this.hideModal();
+        });
+        
+        document.getElementById('reference-modal').addEventListener('click', (e) => {
+          if (e.target.id === 'reference-modal') {
+            this.hideModal();
+          }
+        });
+      },
+      
+      showReferenceBPModal() {
+        const modalHtml = `
+          <div class="modal-overlay" id="reference-modal">
+            <div class="modal">
+              <div class="modal-header">
+                <h3>${this.currentLanguage === 'fr' ? 'Définir la pression artérielle de référence' : 'تعيين ضغط الدم المرجعي'}</h3>
+                <button class="modal-close">&times;</button>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                  <label for="reference-systolic-input">${this.currentLanguage === 'fr' ? 'Systolique' : 'الانقباضي'}</label>
+                  <input type="number" id="reference-systolic-input" value="${this.referenceBloodPressure.systolic || '120'}" />
+                </div>
+                <div class="form-group">
+                  <label for="reference-diastolic-input">${this.currentLanguage === 'fr' ? 'Diastolique' : 'الانبساطي'}</label>
+                  <input type="number" id="reference-diastolic-input" value="${this.referenceBloodPressure.diastolic || '80'}" />
+                </div>
+              </div>
+              <button class="btn btn-primary" id="save-reference-btn" style="width: 100%">
+                ${this.currentLanguage === 'fr' ? 'Enregistrer' : 'حفظ'}
+              </button>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        
+        // Ajouter les écouteurs d'événements pour la modale
+        document.getElementById('save-reference-btn').addEventListener('click', () => {
+          const systolic = document.getElementById('reference-systolic-input').value;
+          const diastolic = document.getElementById('reference-diastolic-input').value;
+          if (systolic && diastolic && !isNaN(parseInt(systolic)) && !isNaN(parseInt(diastolic))) {
+            this.setReferenceBloodPressure(systolic, diastolic);
+            this.hideModal();
+            this.showNotification(
+              this.currentLanguage === 'fr' 
+                ? 'Pression artérielle de référence enregistrée avec succès!' 
+                : 'تم حفظ ضغط الدم المرجعي بنجاح!',
+              'success'
+            );
+          }
+        });
+        
+        document.querySelector('.modal-close').addEventListener('click', () => {
+          this.hideModal();
+        });
+        
+        document.getElementById('reference-modal').addEventListener('click', (e) => {
+          if (e.target.id === 'reference-modal') {
+            this.hideModal();
+          }
+        });
+      },
+      
+      hideModal() {
+        const modal = document.getElementById('reference-modal');
+        if (modal) {
+          modal.remove();
+        }
+      },
+      
+      showNotification(message, type = 'success') {
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        const notificationHtml = `
+          <div class="notification">
+            <i class="fas ${icon}"></i>
+            <span>${message}</span>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', notificationHtml);
+        
+        // Supprimer la notification après l'animation
+        setTimeout(() => {
+          const notification = document.querySelector('.notification');
+          if (notification) {
+            notification.remove();
+          }
+        }, 3000);
+      },
+
+      showPanel(panelId) {
+        // Masquer tous les panneaux
+        document.querySelectorAll('section').forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        // Afficher le panneau sélectionné
+        const panel = document.getElementById(`${panelId}-panel`);
+        panel.classList.remove('hidden');
+        
+        // Mettre à jour la navigation active
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        document.querySelector(`.nav-btn[data-panel="${panelId}"]`).classList.add('active');
+        
+        // Animation d'entrée du panneau
+        panel.style.animation = 'none';
+        setTimeout(() => {
+          panel.style.animation = 'fadeInUp 0.5s ease-out';
+        }, 10);
+      },
+
+      changeLanguage(lang) {
+        this.currentLanguage = lang;
+        
+        // Mettre à jour le toggle de langue
+        document.querySelectorAll('.language-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        document.querySelector(`.language-btn[data-lang="${lang}"]`).classList.add('active');
+        
+        // Changer la direction du document
+        document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        
+        // Traduire le contenu
+        this.translateContent();
+      },
+
+      translateContent() {
+        // Traduire tous les éléments avec l'attribut data-i18n
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+          const key = element.getAttribute('data-i18n');
+          if (translations[this.currentLanguage][key]) {
+            element.textContent = translations[this.currentLanguage][key];
+          }
+        });
+      },
+
+      submitCheckin() {
+        const weight = document.getElementById('weight').value;
+        const bp = document.getElementById('blood-pressure').value;
+        const hr = document.getElementById('heart-rate').value;
+        const oxygen = document.getElementById('oxygen').value;
+        
+        // Récupérer les symptômes sélectionnés
+        const selectedSymptoms = [];
+        document.querySelectorAll('.symptom-checkbox:checked').forEach(checkbox => {
+          selectedSymptoms.push(checkbox.value);
+        });
+        
+        if (!weight || !bp || !hr) {
+          alert(this.currentLanguage === 'fr' 
+            ? 'Veuillez remplir au moins les champs Poids, Tension et Fréquence cardiaque' 
+            : 'يرجى ملء الحقول على الأقل: الوزن، الضغط ومعدل ضربات القلب');
+          return;
+        }
+        
+        // Valider la tension artérielle
+        const bpPattern = /^\d{2,3}\/\d{2,3}$/;
+        if (!bpPattern.test(bp)) {
+          alert(this.currentLanguage === 'fr' 
+            ? 'Format de tension artérielle invalide. Utilisez le format: 120/80' 
+            : 'تنسيق ضغط الدم غير صالح. استخدم التنسيق: 120/80');
+          return;
+        }
+        
+        const [systolic, diastolic] = bp.split('/').map(Number);
+        
+        this.addCheckin({
+          weight: parseFloat(weight),
+          systolic,
+          diastolic,
+          heartRate: parseInt(hr),
+          oxygen: oxygen ? parseInt(oxygen) : null,
+          symptoms: selectedSymptoms
+        });
+        
+        // Réinitialiser le formulaire
+        document.getElementById('weight').value = '';
+        document.getElementById('blood-pressure').value = '';
+        document.getElementById('heart-rate').value = '';
+        document.getElementById('oxygen').value = '';
+        document.querySelectorAll('.symptom-checkbox:checked').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+      },
+
+      renderCheckinHistory() {
+        const historyContainer = document.getElementById('checkin-history');
+        
+        if (this.checkins.length === 0) {
+          historyContainer.innerHTML = `<p class="text-center text-muted">${translations[this.currentLanguage].noData}</p>`;
+          return;
+        }
+        
+        historyContainer.innerHTML = this.checkins.map((checkin, index) => {
+          const date = new Date(checkin.date);
+          const now = new Date();
+          const isToday = date.toDateString() === now.toDateString();
+          const isYesterday = new Date(now.setDate(now.getDate() - 1)).toDateString() === date.toDateString();
+          
+          let dateStr;
+          if (isToday) {
+            dateStr = `${translations[this.currentLanguage].today}, ${date.toLocaleTimeString(this.currentLanguage, { hour: '2-digit', minute: '2-digit' })}`;
+          } else if (isYesterday) {
+            dateStr = `${translations[this.currentLanguage].yesterday}, ${date.toLocaleTimeString(this.currentLanguage, { hour: '2-digit', minute: '2-digit' })}`;
+          } else {
+            dateStr = date.toLocaleDateString(this.currentLanguage, { 
+              year: 'numeric', 
+              month: '2-digit', 
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+          }
+          
+          // Déterminer le statut
+          const status = this.determineStatus(checkin);
+          
+          return `
+            <div class="checkin-item" style="animation-delay: ${index * 0.05}s">
+              <div class="checkin-date"><i class="far fa-calendar-alt"></i> ${dateStr}</div>
+              <div class="checkin-details">
+                <div>
+                  <div class="checkin-value">${checkin.weight} kg</div>
+                  <div class="checkin-label">${translations[this.currentLanguage].weight}</div>
+                </div>
+                <div>
+                  <div class="checkin-value">${checkin.systolic}/${checkin.diastolic}</div>
+                  <div class="checkin-label">${translations[this.currentLanguage].bloodPressure}</div>
+                </div>
+                <div>
+                  <div class="checkin-value">${checkin.heartRate} bpm</div>
+                  <div class="checkin-label">${translations[this.currentLanguage].heartRate}</div>
+                </div>
+                <div>
+                  <div class="checkin-value">${checkin.oxygen || '-'}%</div>
+                  <div class="checkin-label">${translations[this.currentLanguage].oxygen}</div>
+                </div>
+              </div>
+              <div class="status-badge ${status.statusClass} mt-1">
+                <i class="fas ${status.statusClass === 'status-green' ? 'fa-check-circle' : status.statusClass === 'status-yellow' ? 'fa-exclamation-triangle' : 'fa-exclamation-circle'}"></i>
+                ${status.statusText}
+              </div>
+            </div>
+          `;
+        }).join('');
+      },
+      
+      determineStatus(checkin) {
+        let statusClass = 'status-green';
+        let statusText = translations[this.currentLanguage].normal;
+        
+        // Vérification de l'hypotension
+        if (checkin.systolic < 90 || checkin.diastolic < 60) {
+          statusClass = 'status-yellow';
+          statusText = translations[this.currentLanguage].attention;
+        }
+        
+        // Vérification de l'hypertension modérée
+        if (checkin.systolic > 140 || checkin.diastolic > 90) {
+          statusClass = 'status-yellow';
+          statusText = translations[this.currentLanguage].attention;
+        }
+        
+        // Vérification de l'hypertension sévère
+        if (checkin.systolic > 160 || checkin.diastolic > 100) {
+          statusClass = 'status-red';
+          statusText = translations[this.currentLanguage].warning;
+        }
+        
+        // Vérification de la fréquence cardiaque
+        if (checkin.heartRate > 100 || checkin.heartRate < 60) {
+          statusClass = 'status-yellow';
+          statusText = translations[this.currentLanguage].attention;
+        }
+        
+        if (checkin.heartRate > 120 || checkin.heartRate < 50) {
+          statusClass = 'status-red';
+          statusText = translations[this.currentLanguage].warning;
+        }
+        
+        // Vérification de la saturation en oxygène
+        if (checkin.oxygen && checkin.oxygen < 94) {
+          statusClass = 'status-yellow';
+          statusText = translations[this.currentLanguage].attention;
+        }
+        
+        if (checkin.oxygen && checkin.oxygen < 90) {
+          statusClass = 'status-red';
+          statusText = translations[this.currentLanguage].warning;
+        }
+        
+        // Vérification de la prise de poids
+        if (this.referenceWeight) {
+          const weightDiff = checkin.weight - this.referenceWeight;
+          
+          if (weightDiff > 1.5) {
+            statusClass = 'status-yellow';
+            statusText = translations[this.currentLanguage].attention;
+          }
+          
+          if (weightDiff > 2) {
+            statusClass = 'status-red';
+            statusText = translations[this.currentLanguage].warning;
+          }
+        }
+        
+        // Vérification des symptômes
+        if (checkin.symptoms && checkin.symptoms.length > 0) {
+          const severeSymptoms = checkin.symptoms.filter(s => 
+            ['essouflement', 'oedeme', 'prise-poids'].includes(s));
+          
+          if (severeSymptoms.length > 0) {
+            statusClass = 'status-yellow';
+            statusText = translations[this.currentLanguage].attention;
+          }
+          
+          if (checkin.symptoms.length >= 3) {
+            statusClass = 'status-red';
+            statusText = translations[this.currentLanguage].warning;
+          }
+        }
+        
+        return { statusClass, statusText };
+      },
+
+      generateRecommendations() {
+        const recommendationsContainer = document.getElementById('recommendations-content');
+        
+        if (this.checkins.length === 0) {
+          recommendationsContainer.innerHTML = `
+            <div class="recommendation">
+              <div class="recommendation-header">
+                <div class="recommendation-icon" style="background: var(--success);">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="recommendation-title">${translations[this.currentLanguage].noRecommendations}</div>
+              </div>
+            </div>
+          `;
+          return;
+        }
+        
+        const latestCheckin = this.checkins[0];
+        let recommendations = [];
+        let emergency = false;
+        
+        // Analyser la tension artérielle
+        if (latestCheckin.systolic > 160 || latestCheckin.diastolic > 100) {
+          emergency = true;
+          recommendations.push({
+            title: `${translations[this.currentLanguage].consultDoctor} - ${translations[this.currentLanguage].systolicWarning}`,
+            advice: translations[this.currentLanguage].emergencyAdvice,
+            icon: 'fas fa-exclamation-triangle',
+            color: 'var(--danger)'
+          });
+        } else if (latestCheckin.systolic > 140 || latestCheckin.diastolic > 90) {
+          recommendations.push({
+            title: translations[this.currentLanguage].systolicWarning,
+            advice: translations[this.currentLanguage].systolicAdvice,
+            icon: 'fas fa-tachometer-alt',
+            color: 'var(--warning)'
+          });
+        } else if (latestCheckin.systolic < 90 || latestCheckin.diastolic < 60) {
+          recommendations.push({
+            title: translations[this.currentLanguage].hypotensionWarning,
+            advice: translations[this.currentLanguage].hypotensionAdvice,
+            icon: 'fas fa-tachometer-alt',
+            color: 'var(--warning)'
+          });
+        }
+        
+        // Analyser le rythme cardiaque
+        if (latestCheckin.heartRate > 120 || latestCheckin.heartRate < 50) {
+          emergency = true;
+          recommendations.push({
+            title: `${translations[this.currentLanguage].consultDoctor} - ${translations[this.currentLanguage].heartRateWarning}`,
+            advice: translations[this.currentLanguage].emergencyAdvice,
+            icon: 'fas fa-heartbeat',
+            color: 'var(--danger)'
+          });
+        } else if (latestCheckin.heartRate > 100 || latestCheckin.heartRate < 60) {
+          recommendations.push({
+            title: translations[this.currentLanguage].heartRateWarning,
+            advice: translations[this.currentLanguage].heartRateAdvice,
+            icon: 'fas fa-heart',
+            color: 'var(--warning)'
+          });
+        }
+        
+        // Analyser la saturation en oxygène
+        if (latestCheckin.oxygen && latestCheckin.oxygen < 90) {
+          emergency = true;
+          recommendations.push({
+            title: `${translations[this.currentLanguage].consultDoctor} - ${translations[this.currentLanguage].lowOxygenWarning}`,
+            advice: translations[this.currentLanguage].emergencyAdvice,
+            icon: 'fas fa-lungs',
+            color: 'var(--danger)'
+          });
+        } else if (latestCheckin.oxygen && latestCheckin.oxygen < 94) {
+          recommendations.push({
+            title: translations[this.currentLanguage].lowOxygenWarning,
+            advice: translations[this.currentLanguage].lowOxygenAdvice,
+            icon: 'fas fa-lungs',
+            color: 'var(--warning)'
+          });
+        }
+        
+        // Analyser le poids par rapport au poids de référence
+        if (this.referenceWeight) {
+          const weightDiff = latestCheckin.weight - this.referenceWeight;
+          
+          if (weightDiff > 2) {
+            emergency = true;
+            recommendations.push({
+              title: `${translations[this.currentLanguage].consultDoctor} - ${translations[this.currentLanguage].weightGainWarning}`,
+              advice: translations[this.currentLanguage].emergencyAdvice,
+              icon: 'fas fa-weight',
+              color: 'var(--danger)'
+            });
+          } else if (weightDiff > 1.5) {
+            recommendations.push({
+              title: translations[this.currentLanguage].weightGainWarning,
+              advice: translations[this.currentLanguage].weightGainAdvice,
+              icon: 'fas fa-weight',
+              color: 'var(--warning)'
+            });
+          } else if (weightDiff < -2) {
+            recommendations.push({
+              title: translations[this.currentLanguage].weightLossWarning,
+              advice: translations[this.currentLanguage].weightLossAdvice,
+              icon: 'fas fa-weight',
+              color: 'var(--warning)'
+            });
+          }
+        }
+        
+        // Analyser les symptômes
+        if (latestCheckin.symptoms && latestCheckin.symptoms.length > 0) {
+          const severeSymptoms = latestCheckin.symptoms.filter(s => 
+            ['essouflement', 'oedeme', 'prise-poids'].includes(s));
+          
+          if (severeSymptoms.length >= 2) {
+            emergency = true;
+            recommendations.push({
+              title: `${translations[this.currentLanguage].consultDoctor} - ${translations[this.currentLanguage].severeSymptomsWarning}`,
+              advice: translations[this.currentLanguage].severeSymptomsAdvice,
+              icon: 'fas fa-exclamation-circle',
+              color: 'var(--danger)'
+            });
+          } else if (severeSymptoms.length > 0) {
+            recommendations.push({
+              title: translations[this.currentLanguage].symptomsPresent,
+              advice: translations[this.currentLanguage].symptomsAdvice,
+              icon: 'fas fa-exclamation-circle',
+              color: 'var(--warning)'
+            });
+          }
+        }
+        
+        // Afficher les recommandations
+        if (recommendations.length === 0) {
+          recommendationsContainer.innerHTML = `
+            <div class="recommendation">
+              <div class="recommendation-header">
+                <div class="recommendation-icon" style="background: var(--success);">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="recommendation-title">${translations[this.currentLanguage].noRecommendations}</div>
+              </div>
+            </div>
+          `;
+        } else {
+          recommendationsContainer.innerHTML = recommendations.map((rec, index) => `
+            <div class="recommendation" style="animation-delay: ${index * 0.1}s">
+              <div class="recommendation-header">
+                <div class="recommendation-icon" style="background: ${rec.color};">
+                  <i class="${rec.icon}"></i>
+                </div>
+                <div class="recommendation-title">${rec.title}</div>
+              </div>
+              <p>${rec.advice}</p>
+            </div>
+          `).join('');
+        }
+
+        // Ajouter une alerte urgente si nécessaire
+        if (emergency) {
+          recommendationsContainer.innerHTML = `
+            <div class="alert-box">
+              <div class="alert-icon">⚠️</div>
+              <div>
+                <h3>${translations[this.currentLanguage].consultDoctor}</h3>
+                <p>${translations[this.currentLanguage].emergencyAdvice}</p>
+              </div>
+            </div>
+          ` + recommendationsContainer.innerHTML;
+        }
+      },
+
+      // Enregistrement du Service Worker pour la PWA
+      registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+              .then((registration) => {
+                console.log('SW registered: ', registration);
+              })
+              .catch((registrationError) => {
+                console.log('SW registration failed: ', registrationError);
+              });
+          });
+        }
+      }
+    };
+
+    // Initialiser l'application
+    document.addEventListener('DOMContentLoaded', () => {
+      AppState.init();
+    });
+  </script>
+</body>
+</html>
