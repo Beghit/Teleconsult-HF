@@ -7,8 +7,8 @@
   <meta name="description" content="Application de télésurveillance cardiaque pour patients insuffisants cardiaques" />
   <meta name="theme-color" content="#0c4da1" />
   
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="https://beghit.github.io/manifest.json">
+  <!-- PWA Manifest - Fixed relative path -->
+  <link rel="manifest" href="manifest.json">
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -600,6 +600,8 @@
     
     .install-banner-content {
       flex: 1;
+      display: flex;
+      flex-direction: column;
     }
     
     .install-banner-close {
@@ -608,6 +610,7 @@
       font-size: 1.2rem;
       cursor: pointer;
       color: var(--muted);
+      align-self: flex-start;
     }
     
     .install-banner-title {
@@ -1123,7 +1126,7 @@
         symptom1: "ضيق في التنفس",
         symptom2: "وذمة الساقين",
         symptom3: "إرهاق شديد",
-        symptom4: "زيادة سريعة في الوزن",
+        symptom4: "زيادة سريعة в الوزن",
         symptom5: "سعال جاف",
         symptom6: "صعوبة التنفس عند الاستلقاء",
         submitCheckin: "إرسال المتابعة",
@@ -1168,7 +1171,7 @@
         hypotensionWarning: "ضغط الدم منخفض",
         hypotensionAdvice: "تأكد من ترطيب جسمك بشكل صحيح وتجنب تغيير الوضعيات بشكل مفاجئ. استشر الطبيب إذا شعرت بالدوار.",
         lowOxygenWarning: "تشبع الأكسجين منخفض",
-        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب إذا استمر ذلك.",
+        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب если استمر ذلك.",
         severeSymptomsWarning: "تم اكتشاف أعراض شديدة",
         severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ.",
         installTitle: "تثبيت HeartGuardian",
@@ -1237,7 +1240,7 @@
         const installBannerBtn = document.getElementById('install-banner-btn');
         
         // Toujours afficher le bouton d'installation au début
-        installButton.style.display = 'flex';
+        if (installButton) installButton.style.display = 'flex';
         
         // Gestion de l'événement beforeinstallprompt
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1247,7 +1250,7 @@
           this.deferredPrompt = e;
           
           // Montrer le bouton d'installation
-          installButton.style.display = 'flex';
+          if (installButton) installButton.style.display = 'flex';
           
           // Afficher la bannière si elle n'a pas été rejetée
           if (!this.bannerDismissed && !this.isAppInstalled) {
@@ -1259,9 +1262,11 @@
         });
 
         // Ajouter un événement au bouton d'installation du header
-        installButton.addEventListener('click', async () => {
-          await this.triggerInstall();
-        });
+        if (installButton) {
+          installButton.addEventListener('click', async () => {
+            await this.triggerInstall();
+          });
+        }
         
         // Ajouter un événement au bouton d'installation de la bannière
         if (installBannerBtn) {
@@ -1506,7 +1511,7 @@
         document.getElementById('reference-modal').addEventListener('click', (e) => {
           if (e.target.id === 'reference-modal') {
             this.hideModal();
-          }
+            }
         });
       },
       
@@ -2008,7 +2013,8 @@
       registerServiceWorker() {
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
+            // Use relative path for service worker
+            navigator.serviceWorker.register('./sw.js')
               .then((registration) => {
                 console.log('SW registered: ', registration);
               })
