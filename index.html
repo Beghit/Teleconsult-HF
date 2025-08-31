@@ -7,8 +7,8 @@
   <meta name="description" content="Application de télésurveillance cardiaque pour patients insuffisants cardiaques" />
   <meta name="theme-color" content="#0c4da1" />
   
-  <!-- PWA Manifest with relative path and correct icon names -->
-  <link rel="manifest" href="manifest.json">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="https://beghit.github.io/manifest.json">
   
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -137,25 +137,44 @@
       box-shadow: 0 2px 4px rgba(26, 86, 219, 0.2);
     }
     
-    /* Install Button - Always visible */
+    /* Install Button - Style amélioré */
     #install-button {
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1.5rem;
       border-radius: 16px;
       border: none;
-      background: var(--success);
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
       color: white;
       cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 500;
+      font-size: 1rem;
+      font-weight: 600;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    #install-button:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.3s ease;
     }
     
     #install-button:hover {
-      background: #0da271;
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    #install-button:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
     
     /* Navigation */
@@ -806,7 +825,7 @@
           <button class="language-btn" data-lang="ar" aria-label="Changer la langue en arabe"><i class="fas fa-language"></i> AR</button>
         </div>
         <button id="install-button" aria-label="Installer l'application">
-          <i class="fas fa-download"></i> Installer
+          <i class="fas fa-download"></i> <span data-i18n="installApp">Installer l'App</span>
         </button>
       </div>
     </header>
@@ -1022,7 +1041,12 @@
         lowOxygenWarning: "Votre saturation en oxygène est basse",
         lowOxygenAdvice: "Asseyez-vous droit, pratiquez des exercices de respiration profonde. Consultez un médecin si cela persiste.",
         severeSymptomsWarning: "Symptômes sévères détectés",
-        severeSymptomsAdvice: "Ces symptômes nécessitent une consultation médicale urgente. Contactez votre médecin ou les urgences."
+        severeSymptomsAdvice: "Ces symptômes nécessitent une consultation médicale urgente. Contactez votre médecin ou les urgences.",
+        installApp: "Installer l'App",
+        installSuccess: "Application installée avec succès!",
+        installInstructionsIOS: "Pour installer l'application: \n1. Appuyez sur le bouton Partager \n2. Faites défiler vers le bas \n3. Appuyez sur 'Sur l'écran d'accueil'",
+        installInstructionsAndroid: "Pour installer l'application: \n1. Appuyez sur le menu (3 points) \n2. Sélectionnez 'Ajouter à l'écran d'accueil'",
+        installInstructionsOther: "Pour installer l'application, utilisez l'option 'Installer' dans le menu de votre navigateur."
       },
       ar: {
         appName: "حارس القلب",
@@ -1048,7 +1072,7 @@
         yourHealthRecords: "آخر تسجيلاتك الصحية",
         personalizedRecommendations: "توصيات مخصصة",
         basedOnYourData: "بناءً على بياناتك الصحية",
-        medicalDeviceWarning: "⚠️ جهاز طبي. في случае появления серьезных симптомов немедленно обратитесь к врачу.",
+        medicalDeviceWarning: "⚠️ جهاز طبي. في حالة ظهور أعراض خطيرة، استشر الطبيب على الفور.",
         today: "اليوم",
         yesterday: "أمس",
         normal: "طبيعي",
@@ -1085,9 +1109,14 @@
         hypotensionWarning: "ضغط الدم منخفض",
         hypotensionAdvice: "تأكد من ترطيب جسمك بشكل صحيح وتجنب تغيير الوضعيات بشكل مفاجئ. استشر الطبيب إذا شعرت بالدوار.",
         lowOxygenWarning: "تشبع الأكسجين منخفض",
-        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب если استمر ذلك.",
+        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب إذا استمر ذلك.",
         severeSymptomsWarning: "تم اكتشاف أعراض شديدة",
-        severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ."
+        severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ.",
+        installApp: "تثبيت التطبيق",
+        installSuccess: "تم تثبيت التطبيق بنجاح!",
+        installInstructionsIOS: "لتثبيت التطبيق: \n1. انقر على زر المشاركة \n2. مرر لأسفل \n3. انقر على 'إضافة إلى الشاشة الرئيسية'",
+        installInstructionsAndroid: "لتثبيت التطبيق: \n1. انقر على القائمة (3 نقاط) \n2. اختر 'إضافة إلى الشاشة الرئيسية'",
+        installInstructionsOther: "لتثبيت التطبيق، استخدم خيار 'التثبيت' في قائمة المتصفح."
       }
     };
 
@@ -1107,49 +1136,65 @@
         this.updateReferenceDisplay();
         this.registerServiceWorker();
         this.setupPWAInstallPrompt();
+        
+        // Vérifier si l'application est déjà installée
+        this.checkIfAppIsInstalled();
       },
 
       setupPWAInstallPrompt() {
         const installButton = document.getElementById('install-button');
         
-        // Always show the install button
-        installButton.style.display = 'flex';
+        // Masquer le bouton par défaut
+        installButton.style.display = 'none';
         
-        // Handle beforeinstallprompt event
+        // Gestion de l'événement beforeinstallprompt
         window.addEventListener('beforeinstallprompt', (e) => {
-          // Prevent the mini-infobar from appearing on mobile
+          // Empêcher le mini-infobar de apparaître sur mobile
           e.preventDefault();
           // Stash the event so it can be triggered later.
           this.deferredPrompt = e;
+          
+          // Afficher le bouton d'installation
+          installButton.style.display = 'flex';
         });
 
-        // Add event to install button
+        // Ajouter un événement au bouton d'installation
         installButton.addEventListener('click', () => {
           if (this.deferredPrompt) {
-            // Show the install prompt
+            // Montrer l'invite d'installation
             this.deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
+            // Attendre que l'utilisateur réponde à l'invite
             this.deferredPrompt.userChoice.then((choiceResult) => {
               if (choiceResult.outcome === 'accepted') {
                 console.log('User accepted the install prompt');
-                this.showNotification('Application installée avec succès!', 'success');
+                this.showNotification(translations[this.currentLanguage].installSuccess, 'success');
+                // Cacher le bouton après l'installation
+                installButton.style.display = 'none';
               } else {
                 console.log('User dismissed the install prompt');
               }
               this.deferredPrompt = null;
             });
           } else {
-            // Guide for manual installation
+            // Guide pour l'installation manuelle
             this.showInstallInstructions();
           }
         });
 
-        // Hide button if app is already installed
+        // Cacher le bouton si l'app est déjà installée
         window.addEventListener('appinstalled', () => {
           console.log('PWA was installed');
           installButton.style.display = 'none';
           this.deferredPrompt = null;
         });
+      },
+      
+      checkIfAppIsInstalled() {
+        // Vérifier si l'application est déjà installée
+        if (window.matchMedia('(display-mode: standalone)').matches || 
+            window.navigator.standalone === true) {
+          document.getElementById('install-button').style.display = 'none';
+        }
       },
 
       showInstallInstructions() {
@@ -1159,11 +1204,11 @@
         let message = '';
         
         if (isIOS) {
-          message = "Pour installer l'application: \n1. Appuyez sur le bouton Partager \n2. Faites défiler vers le bas \n3. Appuyez sur 'Sur l'écran d'accueil'";
+          message = translations[this.currentLanguage].installInstructionsIOS;
         } else if (isAndroid) {
-          message = "Pour installer l'application: \n1. Appuyez sur le menu (3 points) \n2. Sélectionnez 'Ajouter à l'écran d'accueil'";
+          message = translations[this.currentLanguage].installInstructionsAndroid;
         } else {
-          message = "Pour installer l'application, utilisez l'option 'Installer' dans le menu de votre navigateur.";
+          message = translations[this.currentLanguage].installInstructionsOther;
         }
         
         alert(message);
@@ -1224,17 +1269,17 @@
         this.renderCheckinHistory();
         this.generateRecommendations();
         
-        // Show success notification
+        // Afficher une notification de succès
         this.showNotification(translations[this.currentLanguage].checkinSuccess, 'success');
         
-        // Show recommendations panel after submission
+        // Afficher le panneau des recommandations après l'envoi
         setTimeout(() => {
           this.showPanel('recommendations');
         }, 1000);
       },
 
       setupEventListeners() {
-        // Navigation between panels
+        // Navigation entre les panneaux
         document.querySelectorAll('.nav-btn').forEach(btn => {
           btn.addEventListener('click', () => {
             const panel = btn.getAttribute('data-panel');
@@ -1242,22 +1287,22 @@
           });
         });
 
-        // Form submission
+        // Envoi du formulaire
         document.getElementById('submit-checkin').addEventListener('click', () => {
           this.submitCheckin();
         });
 
-        // Set reference weight
+        // Définir le poids de référence
         document.getElementById('set-weight-reference-btn').addEventListener('click', () => {
           this.showReferenceWeightModal();
         });
         
-        // Set reference blood pressure
+        // Définir la pression artérielle de référence
         document.getElementById('set-bp-reference-btn').addEventListener('click', () => {
           this.showReferenceBPModal();
         });
 
-        // Language change
+        // Changement de langue
         document.querySelectorAll('.language-btn').forEach(btn => {
           btn.addEventListener('click', () => {
             const lang = btn.getAttribute('data-lang');
@@ -1287,7 +1332,7 @@
         
         document.body.insertAdjacentHTML('beforeend', modalHtml);
         
-        // Add event listeners for the modal
+        // Ajouter les écouteurs d'événements pour la modale
         document.getElementById('save-reference-btn').addEventListener('click', () => {
           const weight = document.getElementById('reference-weight-input').value;
           if (weight && !isNaN(parseFloat(weight))) {
@@ -1340,7 +1385,7 @@
         
         document.body.insertAdjacentHTML('beforeend', modalHtml);
         
-        // Add event listeners for the modal
+        // Ajouter les écouteurs d'événements pour la modale
         document.getElementById('save-reference-btn').addEventListener('click', () => {
           const systolic = document.getElementById('reference-systolic-input').value;
           const diastolic = document.getElementById('reference-diastolic-input').value;
@@ -1385,7 +1430,7 @@
         
         document.body.insertAdjacentHTML('beforeend', notificationHtml);
         
-        // Remove notification after animation
+        // Supprimer la notification après l'animation
         setTimeout(() => {
           const notification = document.querySelector('.notification');
           if (notification) {
@@ -1395,23 +1440,23 @@
       },
 
       showPanel(panelId) {
-        // Hide all panels
+        // Masquer tous les panneaux
         document.querySelectorAll('section').forEach(section => {
           section.classList.add('hidden');
         });
         
-        // Show selected panel
+        // Afficher le panneau sélectionné
         const panel = document.getElementById(`${panelId}-panel`);
         panel.classList.remove('hidden');
         
-        // Update active navigation
+        // Mettre à jour la navigation active
         document.querySelectorAll('.nav-btn').forEach(btn => {
           btn.classList.remove('active');
         });
         
         document.querySelector(`.nav-btn[data-panel="${panelId}"]`).classList.add('active');
         
-        // Panel entry animation
+        // Animation d'entrée du panneau
         panel.style.animation = 'none';
         setTimeout(() => {
           panel.style.animation = 'fadeInUp 0.5s ease-out';
@@ -1421,21 +1466,21 @@
       changeLanguage(lang) {
         this.currentLanguage = lang;
         
-        // Update language toggle
+        // Mettre à jour le toggle de langue
         document.querySelectorAll('.language-btn').forEach(btn => {
           btn.classList.remove('active');
         });
         document.querySelector(`.language-btn[data-lang="${lang}"]`).classList.add('active');
         
-        // Change document direction
+        // Changer la direction du document
         document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
         
-        // Translate content
+        // Traduire le contenu
         this.translateContent();
       },
 
       translateContent() {
-        // Translate all elements with data-i18n attribute
+        // Traduire tous les éléments avec l'attribut data-i18n
         document.querySelectorAll('[data-i18n]').forEach(element => {
           const key = element.getAttribute('data-i18n');
           if (translations[this.currentLanguage][key]) {
@@ -1450,7 +1495,7 @@
         const hr = document.getElementById('heart-rate').value;
         const oxygen = document.getElementById('oxygen').value;
         
-        // Get selected symptoms
+        // Récupérer les symptômes sélectionnés
         const selectedSymptoms = [];
         document.querySelectorAll('.symptom-checkbox:checked').forEach(checkbox => {
           selectedSymptoms.push(checkbox.value);
@@ -1463,7 +1508,7 @@
           return;
         }
         
-        // Validate blood pressure
+        // Valider la tension artérielle
         const bpPattern = /^\d{2,3}\/\d{2,3}$/;
         if (!bpPattern.test(bp)) {
           alert(this.currentLanguage === 'fr' 
@@ -1483,7 +1528,7 @@
           symptoms: selectedSymptoms
         });
         
-        // Reset form
+        // Réinitialiser le formulaire
         document.getElementById('weight').value = '';
         document.getElementById('blood-pressure').value = '';
         document.getElementById('heart-rate').value = '';
@@ -1522,7 +1567,7 @@
             });
           }
           
-          // Determine status
+          // Déterminer le statut
           const status = this.determineStatus(checkin);
           
           return `
@@ -1559,25 +1604,25 @@
         let statusClass = 'status-green';
         let statusText = translations[this.currentLanguage].normal;
         
-        // Check for hypotension
+        // Vérification de l'hypotension
         if (checkin.systolic < 90 || checkin.diastolic < 60) {
           statusClass = 'status-yellow';
           statusText = translations[this.currentLanguage].attention;
         }
         
-        // Check for moderate hypertension
+        // Vérification de l'hypertension modérée
         if (checkin.systolic > 140 || checkin.diastolic > 90) {
           statusClass = 'status-yellow';
           statusText = translations[this.currentLanguage].attention;
         }
         
-        // Check for severe hypertension
+        // Vérification de l'hypertension sévère
         if (checkin.systolic > 160 || checkin.diastolic > 100) {
           statusClass = 'status-red';
           statusText = translations[this.currentLanguage].warning;
         }
         
-        // Check heart rate
+        // Vérification de la fréquence cardiaque
         if (checkin.heartRate > 100 || checkin.heartRate < 60) {
           statusClass = 'status-yellow';
           statusText = translations[this.currentLanguage].attention;
@@ -1588,7 +1633,7 @@
           statusText = translations[this.currentLanguage].warning;
         }
         
-        // Check oxygen saturation
+        // Vérification de la saturation en oxygène
         if (checkin.oxygen && checkin.oxygen < 94) {
           statusClass = 'status-yellow';
           statusText = translations[this.currentLanguage].attention;
@@ -1599,7 +1644,7 @@
           statusText = translations[this.currentLanguage].warning;
         }
         
-        // Check weight gain
+        // Vérification de la prise de poids
         if (this.referenceWeight) {
           const weightDiff = checkin.weight - this.referenceWeight;
           
@@ -1614,7 +1659,7 @@
           }
         }
         
-        // Check symptoms
+        // Vérification des symptômes
         if (checkin.symptoms && checkin.symptoms.length > 0) {
           const severeSymptoms = checkin.symptoms.filter(s => 
             ['essouflement', 'oedeme', 'prise-poids'].includes(s));
@@ -1654,7 +1699,7 @@
         let recommendations = [];
         let emergency = false;
         
-        // Analyze blood pressure
+        // Analyser la tension artérielle
         if (latestCheckin.systolic > 160 || latestCheckin.diastolic > 100) {
           emergency = true;
           recommendations.push({
@@ -1679,7 +1724,7 @@
           });
         }
         
-        // Analyze heart rate
+        // Analyser le rythme cardiaque
         if (latestCheckin.heartRate > 120 || latestCheckin.heartRate < 50) {
           emergency = true;
           recommendations.push({
@@ -1697,7 +1742,7 @@
           });
         }
         
-        // Analyze oxygen saturation
+        // Analyser la saturation en oxygène
         if (latestCheckin.oxygen && latestCheckin.oxygen < 90) {
           emergency = true;
           recommendations.push({
@@ -1715,7 +1760,7 @@
           });
         }
         
-        // Analyze weight compared to reference weight
+        // Analyser le poids par rapport au poids de référence
         if (this.referenceWeight) {
           const weightDiff = latestCheckin.weight - this.referenceWeight;
           
@@ -1744,7 +1789,7 @@
           }
         }
         
-        // Analyze symptoms
+        // Analyser les symptômes
         if (latestCheckin.symptoms && latestCheckin.symptoms.length > 0) {
           const severeSymptoms = latestCheckin.symptoms.filter(s => 
             ['essouflement', 'oedeme', 'prise-poids'].includes(s));
@@ -1767,7 +1812,7 @@
           }
         }
         
-        // Display recommendations
+        // Afficher les recommandations
         if (recommendations.length === 0) {
           recommendationsContainer.innerHTML = `
             <div class="recommendation">
@@ -1793,7 +1838,7 @@
           `).join('');
         }
 
-        // Add urgent alert if needed
+        // Ajouter une alerte urgente si nécessaire
         if (emergency) {
           recommendationsContainer.innerHTML = `
             <div class="alert-box">
@@ -1807,7 +1852,7 @@
         }
       },
 
-      // Service Worker Registration for PWA
+      // Enregistrement du Service Worker pour la PWA
       registerServiceWorker() {
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
@@ -1823,7 +1868,7 @@
       }
     };
 
-    // Initialize the application
+    // Initialiser l'application
     document.addEventListener('DOMContentLoaded', () => {
       AppState.init();
     });
