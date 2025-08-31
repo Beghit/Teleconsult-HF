@@ -13,6 +13,7 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* Your existing CSS remains unchanged */
     :root {
       --primary: #1a56db;
       --primary-dark: #0c4da1;
@@ -137,7 +138,7 @@
       box-shadow: 0 2px 4px rgba(26, 86, 219, 0.2);
     }
     
-    /* Install Button - Toujours visible */
+    /* Install Button - Always visible */
     #install-button {
       padding: 0.5rem 1rem;
       border-radius: 16px;
@@ -1098,6 +1099,7 @@
       referenceWeight: null,
       referenceBloodPressure: { systolic: 120, diastolic: 80 },
       deferredPrompt: null,
+      isAppInstalled: false,
 
       init() {
         this.loadData();
@@ -1107,12 +1109,34 @@
         this.updateReferenceDisplay();
         this.registerServiceWorker();
         this.setupPWAInstallPrompt();
+        this.checkIfAppIsInstalled();
+      },
+
+      checkIfAppIsInstalled() {
+        // Vérifier si l'application est déjà installée
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+          this.isAppInstalled = true;
+          this.hideInstallButton();
+        }
+        
+        // Écouter les changements d'affichage
+        window.addEventListener('appinstalled', () => {
+          this.isAppInstalled = true;
+          this.hideInstallButton();
+        });
+      },
+      
+      hideInstallButton() {
+        const installButton = document.getElementById('install-button');
+        if (installButton) {
+          installButton.style.display = 'none';
+        }
       },
 
       setupPWAInstallPrompt() {
         const installButton = document.getElementById('install-button');
         
-        // Toujours afficher le bouton d'installation
+        // Toujours afficher le bouton d'installation au début
         installButton.style.display = 'flex';
         
         // Gestion de l'événement beforeinstallprompt
@@ -1121,23 +1145,34 @@
           e.preventDefault();
           // Stash the event so it can be triggered later.
           this.deferredPrompt = e;
+          
+          // Montrer le bouton d'installation
+          installButton.style.display = 'flex';
+          
+          // Log pour le débogage
+          console.log('beforeinstallprompt event was fired');
         });
 
         // Ajouter un événement au bouton d'installation
-        installButton.addEventListener('click', () => {
+        installButton.addEventListener('click', async () => {
           if (this.deferredPrompt) {
             // Montrer l'invite d'installation
             this.deferredPrompt.prompt();
+            
             // Attendre que l'utilisateur réponde à l'invite
-            this.deferredPrompt.userChoice.then((choiceResult) => {
-              if (choiceResult.outcome === 'accepted') {
-                console.log('User accepted the install prompt');
-                this.showNotification('Application installée avec succès!', 'success');
-              } else {
-                console.log('User dismissed the install prompt');
-              }
-              this.deferredPrompt = null;
-            });
+            const { outcome } = await this.deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+              console.log('User accepted the install prompt');
+              this.showNotification('Application installée avec succès!', 'success');
+              this.isAppInstalled = true;
+              this.hideInstallButton();
+            } else {
+              console.log('User dismissed the install prompt');
+            }
+            
+            // Clear the saved prompt since it can't be used again
+            this.deferredPrompt = null;
           } else {
             // Guide pour l'installation manuelle
             this.showInstallInstructions();
@@ -1147,7 +1182,8 @@
         // Cacher le bouton si l'app est déjà installée
         window.addEventListener('appinstalled', () => {
           console.log('PWA was installed');
-          installButton.style.display = 'none';
+          this.isAppInstalled = true;
+          this.hideInstallButton();
           this.deferredPrompt = null;
         });
       },
@@ -1155,15 +1191,22 @@
       showInstallInstructions() {
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const isAndroid = /Android/.test(navigator.userAgent);
+        const isMobile = /Mobi/.test(navigator.userAgent);
         
         let message = '';
         
         if (isIOS) {
-          message = "Pour installer l'application: \n1. Appuyez sur le bouton Partager \n2. Faites défiler vers le bas \n3. Appuyez sur 'Sur l'écran d'accueil'";
-        } else if (isAndroid) {
-          message = "Pour installer l'application: \n1. Appuyez sur le menu (3 points) \n2. Sélectionnez 'Ajouter à l'écran d'accueil'";
+          message = this.currentLanguage === 'fr' 
+            ? "Pour installer l'application sur iOS:\n1. Appuyez sur le bouton Partager\n2. Faites défiler vers le bas\n3. Appuyez sur 'Sur l'écran d'accueil'"
+            : "لتثبيت التطبيق على iOS:\n1. انقر على زر المشاركة\n2. مرر لأسفل\n3. انقر على 'إلى الشاشة الرئيسية'";
+        } else if (isAndroid && isMobile) {
+          message = this.currentLanguage === 'fr'
+            ? "Pour installer l'application sur Android:\n1. Appuyez sur le menu (3 points)\n2. Sélectionnez 'Ajouter à l'écran d'accueil'"
+            : "لتثبيت التطبيق على Android:\n1. انقر على القائمة (3 نقاط)\n2. اختر 'إضافة إلى الشاشة الرئيسية'";
         } else {
-          message = "Pour installer l'application, utilisez l'option 'Installer' dans le menu de votre navigateur.";
+          message = this.currentLanguage === 'fr'
+            ? "Pour installer l'application, utilisez l'option 'Installer' dans le menu de votre navigateur (généralement dans la barre d'adresse)."
+            : "لتثبيت التطبيق، استخدم خيار 'تثبيت' في menu المتصفح (عادة في شريط العنوان).";
         }
         
         alert(message);
