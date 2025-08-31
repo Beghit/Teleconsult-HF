@@ -2,7 +2,7 @@
   "name": "HeartGuardian",
   "short_name": "HeartGuardian",
   "description": "Application de télésurveillance cardiaque pour patients insuffisants cardiaques",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f1f5f9",
   "theme_color": "#0c4da1",
