@@ -1,13 +1,11 @@
-const CACHE_NAME = 'heartguardian-v4';
+const CACHE_NAME = 'heartguardian-v2';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+  '/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -20,7 +18,14 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
+        // Retourne le fichier en cache ou fetch depuis le réseau
         return response || fetch(event.request);
+      })
+      .catch(() => {
+        // Fallback pour les pages - retourne index.html pour les routes
+        if (event.request.mode === 'navigate') {
+          return caches.match('/index.html');
+        }
       })
   );
 });
@@ -37,5 +42,4 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-  self.clients.claim();
 });
