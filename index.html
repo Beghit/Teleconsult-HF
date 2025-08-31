@@ -581,6 +581,52 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
+    /* Install Banner */
+    .install-banner {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 400px;
+      animation: slideInUp 0.5s ease-out;
+    }
+    
+    .install-banner-content {
+      flex: 1;
+    }
+    
+    .install-banner-close {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    
+    .install-banner-title {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--primary-dark);
+    }
+    
+    .install-banner-text {
+      color: var(--muted);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+    
+    .install-banner-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+    
     /* Footer */
     footer {
       text-align: center;
@@ -705,6 +751,17 @@
       }
     }
     
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.05); }
@@ -788,10 +845,31 @@
       .reference-container {
         grid-template-columns: 1fr;
       }
+      
+      .install-banner {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        border-radius: 0;
+        max-width: none;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Install Banner -->
+  <div id="install-banner" class="install-banner hidden">
+    <div class="install-banner-content">
+      <h3 class="install-banner-title" data-i18n="installTitle">Installer HeartGuardian</h3>
+      <p class="install-banner-text" data-i18n="installText">Installez l'application pour un accès rapide, même hors ligne</p>
+      <div class="install-banner-actions">
+        <button id="install-banner-btn" class="btn btn-primary" data-i18n="installButton">Installer</button>
+        <button id="dismiss-banner" class="btn btn-secondary" data-i18n="dismissButton">Plus tard</button>
+      </div>
+    </div>
+    <button class="install-banner-close" id="close-banner">&times;</button>
+  </div>
+
   <div class="container">
     <header>
       <div class="logo">
@@ -1023,7 +1101,11 @@
         lowOxygenWarning: "Votre saturation en oxygène est basse",
         lowOxygenAdvice: "Asseyez-vous droit, pratiquez des exercices de respiration profonde. Consultez un médecin si cela persiste.",
         severeSymptomsWarning: "Symptômes sévères détectés",
-        severeSymptomsAdvice: "Ces symptômes nécessitent une consultation médicale urgente. Contactez votre médecin ou les urgences."
+        severeSymptomsAdvice: "Ces symptômes nécessitent une consultation médicale urgente. Contactez votre médecin ou les urgences.",
+        installTitle: "Installer HeartGuardian",
+        installText: "Installez l'application pour un accès rapide, même hors ligne",
+        installButton: "Installer",
+        dismissButton: "Plus tard"
       },
       ar: {
         appName: "حارس القلب",
@@ -1041,7 +1123,7 @@
         symptom1: "ضيق في التنفس",
         symptom2: "وذمة الساقين",
         symptom3: "إرهاق شديد",
-        symptom4: "زيادة سريعة в الوزن",
+        symptom4: "زيادة سريعة في الوزن",
         symptom5: "سعال جاف",
         symptom6: "صعوبة التنفس عند الاستلقاء",
         submitCheckin: "إرسال المتابعة",
@@ -1067,7 +1149,7 @@
         heartRateWarning: "معدل ضربات القلب مرتفع",
         heartRateAdvice: "تجنب الكافيين، مارس تمارين التنفس العميق وتأكد من الحصول على قسط كافٍ من النوم.",
         lowHeartRateWarning: "معدل ضربات القلب منخفض",
-        lowHeartRateAdvice: "إذا كنت تشعر بالضعف или الدوار، استشر طبيبك.",
+        lowHeartRateAdvice: "إذا كنت تشعر بالضعف أو الدوار، استشر طبيبك.",
         oxygenWarning: "تشبع الأكسجين منخفض",
         oxygenAdvice: "تأكد من التهوية الجيدة واستشر الطبيب إذا استمر ذلك.",
         weightGainWarning: "تم اكتشاف زيادة في الوزن",
@@ -1088,7 +1170,11 @@
         lowOxygenWarning: "تشبع الأكسجين منخفض",
         lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب إذا استمر ذلك.",
         severeSymptomsWarning: "تم اكتشاف أعراض شديدة",
-        severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ."
+        severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ.",
+        installTitle: "تثبيت HeartGuardian",
+        installText: "قم بتثبيت التطبيق للوصول السريع، حتى بدون اتصال",
+        installButton: "تثبيت",
+        dismissButton: "لاحقًا"
       }
     };
 
@@ -1100,6 +1186,7 @@
       referenceBloodPressure: { systolic: 120, diastolic: 80 },
       deferredPrompt: null,
       isAppInstalled: false,
+      bannerDismissed: false,
 
       init() {
         this.loadData();
@@ -1110,6 +1197,17 @@
         this.registerServiceWorker();
         this.setupPWAInstallPrompt();
         this.checkIfAppIsInstalled();
+        
+        // Vérifier si la bannière a été rejetée
+        const dismissed = localStorage.getItem('heartGuardianBannerDismissed');
+        this.bannerDismissed = dismissed === 'true';
+        
+        // Afficher la bannière d'installation après un délai
+        if (!this.isAppInstalled && !this.bannerDismissed) {
+          setTimeout(() => {
+            this.showInstallBanner();
+          }, 3000);
+        }
       },
 
       checkIfAppIsInstalled() {
@@ -1123,6 +1221,7 @@
         window.addEventListener('appinstalled', () => {
           this.isAppInstalled = true;
           this.hideInstallButton();
+          this.hideInstallBanner();
         });
       },
       
@@ -1135,6 +1234,7 @@
 
       setupPWAInstallPrompt() {
         const installButton = document.getElementById('install-button');
+        const installBannerBtn = document.getElementById('install-banner-btn');
         
         // Toujours afficher le bouton d'installation au début
         installButton.style.display = 'flex';
@@ -1149,43 +1249,88 @@
           // Montrer le bouton d'installation
           installButton.style.display = 'flex';
           
+          // Afficher la bannière si elle n'a pas été rejetée
+          if (!this.bannerDismissed && !this.isAppInstalled) {
+            this.showInstallBanner();
+          }
+          
           // Log pour le débogage
           console.log('beforeinstallprompt event was fired');
         });
 
-        // Ajouter un événement au bouton d'installation
+        // Ajouter un événement au bouton d'installation du header
         installButton.addEventListener('click', async () => {
-          if (this.deferredPrompt) {
-            // Montrer l'invite d'installation
-            this.deferredPrompt.prompt();
-            
-            // Attendre que l'utilisateur réponde à l'invite
-            const { outcome } = await this.deferredPrompt.userChoice;
-            
-            if (outcome === 'accepted') {
-              console.log('User accepted the install prompt');
-              this.showNotification('Application installée avec succès!', 'success');
-              this.isAppInstalled = true;
-              this.hideInstallButton();
-            } else {
-              console.log('User dismissed the install prompt');
-            }
-            
-            // Clear the saved prompt since it can't be used again
-            this.deferredPrompt = null;
-          } else {
-            // Guide pour l'installation manuelle
-            this.showInstallInstructions();
-          }
+          await this.triggerInstall();
         });
+        
+        // Ajouter un événement au bouton d'installation de la bannière
+        if (installBannerBtn) {
+          installBannerBtn.addEventListener('click', async () => {
+            await this.triggerInstall();
+          });
+        }
 
         // Cacher le bouton si l'app est déjà installée
         window.addEventListener('appinstalled', () => {
           console.log('PWA was installed');
           this.isAppInstalled = true;
           this.hideInstallButton();
+          this.hideInstallBanner();
           this.deferredPrompt = null;
         });
+      },
+      
+      async triggerInstall() {
+        if (this.deferredPrompt) {
+          // Montrer l'invite d'installation
+          this.deferredPrompt.prompt();
+          
+          // Attendre que l'utilisateur réponde à l'invite
+          const { outcome } = await this.deferredPrompt.userChoice;
+          
+          if (outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+            this.showNotification(
+              this.currentLanguage === 'fr' 
+                ? 'Application installée avec succès!' 
+                : 'تم تثبيت التطبيق بنجاح!',
+              'success'
+            );
+            this.isAppInstalled = true;
+            this.hideInstallButton();
+            this.hideInstallBanner();
+          } else {
+            console.log('User dismissed the install prompt');
+          }
+          
+          // Clear the saved prompt since it can't be used again
+          this.deferredPrompt = null;
+        } else {
+          // Guide pour l'installation manuelle
+          this.showInstallInstructions();
+        }
+      },
+
+      showInstallBanner() {
+        if (this.isAppInstalled || this.bannerDismissed) return;
+        
+        const installBanner = document.getElementById('install-banner');
+        if (installBanner) {
+          installBanner.classList.remove('hidden');
+        }
+      },
+      
+      hideInstallBanner() {
+        const installBanner = document.getElementById('install-banner');
+        if (installBanner) {
+          installBanner.classList.add('hidden');
+        }
+      },
+      
+      dismissInstallBanner() {
+        this.bannerDismissed = true;
+        localStorage.setItem('heartGuardianBannerDismissed', 'true');
+        this.hideInstallBanner();
       },
 
       showInstallInstructions() {
@@ -1306,6 +1451,15 @@
             const lang = btn.getAttribute('data-lang');
             this.changeLanguage(lang);
           });
+        });
+        
+        // Boutons de la bannière d'installation
+        document.getElementById('dismiss-banner')?.addEventListener('click', () => {
+          this.dismissInstallBanner();
+        });
+        
+        document.getElementById('close-banner')?.addEventListener('click', () => {
+          this.dismissInstallBanner();
         });
       },
 
