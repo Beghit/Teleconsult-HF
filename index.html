@@ -29,7 +29,6 @@
       --border: #e2e8f0;
       --input-bg: #ffffff;
       --gradient: linear-gradient(135deg, #1a56db 0%, #0c4da1 100%);
-      --install-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
     
     * {
@@ -138,31 +137,25 @@
       box-shadow: 0 2px 4px rgba(26, 86, 219, 0.2);
     }
     
-    /* Install Button - Enhanced */
+    /* Install Button - Toujours visible */
     #install-button {
-      padding: 0.75rem 1.5rem;
-      border-radius: 12px;
+      padding: 0.5rem 1rem;
+      border-radius: 16px;
       border: none;
-      background: var(--install-gradient);
+      background: var(--success);
       color: white;
       cursor: pointer;
-      font-size: 1rem;
-      font-weight: 600;
+      font-size: 0.85rem;
+      font-weight: 500;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
-      animation: pulseInstall 2s infinite;
     }
     
     #install-button:hover {
-      transform: translateY(-2px) scale(1.05);
-      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
-    }
-    
-    #install-button:active {
-      transform: translateY(0);
+      background: #0da271;
+      transform: translateY(-2px);
     }
     
     /* Navigation */
@@ -587,31 +580,6 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
-    /* Installation Guide Modal */
-    .install-steps {
-      margin: 1.5rem 0;
-    }
-    
-    .install-step {
-      display: flex;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-      gap: 0.75rem;
-    }
-    
-    .step-number {
-      background: var(--primary);
-      color: white;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
-    
     /* Footer */
     footer {
       text-align: center;
@@ -742,21 +710,6 @@
       100% { transform: scale(1); }
     }
     
-    @keyframes pulseInstall {
-      0% { 
-        transform: scale(1);
-        box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
-      }
-      50% { 
-        transform: scale(1.03);
-        box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
-      }
-      100% { 
-        transform: scale(1);
-        box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
-      }
-    }
-    
     @keyframes pulseWarning {
       0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
       70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
@@ -853,7 +806,7 @@
           <button class="language-btn" data-lang="ar" aria-label="Changer la langue en arabe"><i class="fas fa-language"></i> AR</button>
         </div>
         <button id="install-button" aria-label="Installer l'application">
-          <i class="fas fa-download"></i> <span data-i18n="installApp">Installer</span>
+          <i class="fas fa-download"></i> Installer
         </button>
       </div>
     </header>
@@ -1003,24 +956,6 @@
     </footer>
   </div>
 
-  <!-- Installation Guide Modal Template -->
-  <template id="install-modal-template">
-    <div class="modal-overlay" id="install-modal">
-      <div class="modal">
-        <div class="modal-header">
-          <h3 data-i18n="installGuide">Guide d'installation</h3>
-          <button class="modal-close">&times;</button>
-        </div>
-        <div class="install-steps" id="install-steps">
-          <!-- Steps will be populated by JavaScript -->
-        </div>
-        <button class="btn btn-primary" id="understand-install-btn" style="width: 100%">
-          <span data-i18n="understand">J'ai compris</span>
-        </button>
-      </div>
-    </div>
-  </template>
-
   <script>
     // ===== CONFIGURATION DES LANGUES =====
     const translations = {
@@ -1068,7 +1003,7 @@
         lowHeartRateWarning: "Votre fréquence cardiaque est basse",
         lowHeartRateAdvice: "Si vous vous sentez faible ou étourdi, consultez votre médecin.",
         oxygenWarning: "Votre saturation en oxygène est basse",
-        oxygenAdvice: "Assurez-vous d'avoir une bonne ventilation et consultez un médecin if cela persiste.",
+        oxygenAdvice: "Assurez-vous d'avoir une bonne ventilation et consultez un médecin si cela persiste.",
         weightGainWarning: "Prise de poids détectée",
         weightGainAdvice: "Surveillez votre alimentation et votre consommation de liquides. Contactez votre médecin si la prise de poids se poursuit.",
         weightLossWarning: "Perte de poids détectée",
@@ -1087,30 +1022,7 @@
         lowOxygenWarning: "Votre saturation en oxygène est basse",
         lowOxygenAdvice: "Asseyez-vous droit, pratiquez des exercices de respiration profonde. Consultez un médecin si cela persiste.",
         severeSymptomsWarning: "Symptômes sévères détectés",
-        severeSymptomsAdvice: "Ces symptômes nécessites une consultation médicale urgente. Contactez votre médecin ou les urgences.",
-        installApp: "Installer l'App",
-        installGuide: "Guide d'installation",
-        understand: "J'ai compris",
-        installStepsChrome: [
-          "Cliquez sur l'icône <strong>⋮</strong> (Menu) en haut à droite",
-          "Sélectionnez <strong>\"Installer HeartGuardian\"</strong>",
-          "Confirmez l'installation dans la fenêtre pop-up"
-        ],
-        installStepsSafari: [
-          "Cliquez sur l'icône <strong>Partager</strong> (carré avec flèche vers le haut)",
-          "Faites défiler vers le bas et sélectionnez <strong>\"Sur l'écran d'accueil\"</strong>",
-          "Cliquez sur <strong>\"Ajouter\"</strong> en haut à droite"
-        ],
-        installStepsFirefox: [
-          "Cliquez sur l'icône <strong>⋮</strong> (Menu) en haut à droite",
-          "Sélectionnez <strong>\"Installer\"</strong>",
-          "Confirmez l'installation dans la fenêtre pop-up"
-        ],
-        installStepsGeneric: [
-          "Ouvrez le menu de votre navigateur (généralement trois points ou trois barres)",
-          "Recherchez l'option <strong>\"Installer\"</strong> ou <strong>\"Ajouter à l'écran d'accueil\"</strong>",
-          "Suivez les instructions à l'écran pour terminer l'installation"
-        ]
+        severeSymptomsAdvice: "Ces symptômes nécessitent une consultation médicale urgente. Contactez votre médecin ou les urgences."
       },
       ar: {
         appName: "حارس القلب",
@@ -1128,7 +1040,7 @@
         symptom1: "ضيق في التنفس",
         symptom2: "وذمة الساقين",
         symptom3: "إرهاق شديد",
-        symptom4: "زيادة سريعة في الوزن",
+        symptom4: "زيادة سريعة в الوزن",
         symptom5: "سعال جاف",
         symptom6: "صعوبة التنفس عند الاستلقاء",
         submitCheckin: "إرسال المتابعة",
@@ -1149,7 +1061,7 @@
         recommendationTitle: "توصية",
         systolicWarning: "ضغط الدم الانقباضي مرتفع",
         systolicAdvice: "قلل من تناول الملح، مارس تمارين معتدلة واستشر طبيبك إذا استمر ذلك.",
-        diastolicWarning: "ض压力 الدم الانبساطي مرتفع",
+        diastolicWarning: "ضغط الدم الانبساطي مرتفع",
         diastolicAdvice: "تجنب التوتر، مارس الاسترخاء وراقب ضغطك بانتظام.",
         heartRateWarning: "معدل ضربات القلب مرتفع",
         heartRateAdvice: "تجنب الكافيين، مارس تمارين التنفس العميق وتأكد من الحصول على قسط كافٍ من النوم.",
@@ -1175,30 +1087,7 @@
         lowOxygenWarning: "تشبع الأكسجين منخفض",
         lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب إذا استمر ذلك.",
         severeSymptomsWarning: "تم اكتشاف أعراض شديدة",
-        severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ.",
-        installApp: "تثبيت التطبيق",
-        installGuide: "دليل التثبيت",
-        understand: "فهمت",
-        installStepsChrome: [
-          "انقر على أيقونة <strong>⋮</strong> (القائمة) في أعلى اليمين",
-          "حدد <strong>\"تثبيت HeartGuardian\"</strong>",
-          "أكد التثبيت في النافذة المنبثقة"
-        ],
-        installStepsSafari: [
-          "انقر على أيقونة <strong>مشاركة</strong> (مربع به سهم لأعلى)",
-          "مرر لأسفل وحدد <strong>\"إلى الشاشة الرئيسية\"</strong>",
-          "انقر على <strong>\"إضافة\"</strong> في أعلى اليمين"
-        ],
-        installStepsFirefox: [
-          "انقر على أيقونة <strong>⋮</strong> (القائمة) في أعلى اليمين",
-          "حدد <strong>\"تثبيت\"</strong>",
-          "أكد التثبيت في النافذة المنبثقة"
-        ],
-        installStepsGeneric: [
-          "افتح قائمة المتصفح (عادة ثلاث نقاط أو ثلاث أشرطة)",
-          "ابحث عن خيار <strong>\"تثبيت\"</strong> أو <strong>\"إضافة إلى الشاشة الرئيسية\"</strong>",
-          "اتبع التعليمات على الشاشة لإكمال التثبيت"
-        ]
+        severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ."
       }
     };
 
@@ -1209,7 +1098,6 @@
       referenceWeight: null,
       referenceBloodPressure: { systolic: 120, diastolic: 80 },
       deferredPrompt: null,
-      isAppInstalled: false,
 
       init() {
         this.loadData();
@@ -1219,79 +1107,38 @@
         this.updateReferenceDisplay();
         this.registerServiceWorker();
         this.setupPWAInstallPrompt();
-        this.checkIfAppIsInstalled();
-        
-        // Vérifier périodiquement si l'app est installée
-        setInterval(() => this.checkIfAppIsInstalled(), 3000);
-      },
-
-      checkIfAppIsInstalled() {
-        // Vérifier si l'application est déjà installée
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                            window.matchMedia('(display-mode: fullscreen)').matches ||
-                            window.matchMedia('(display-mode: minimal-ui)').matches ||
-                            (navigator.standalone === true);
-        
-        if (isStandalone && !this.isAppInstalled) {
-          this.isAppInstalled = true;
-          document.getElementById('install-button').classList.add('hidden');
-        } else if (!isStandalone && this.isAppInstalled) {
-          this.isAppInstalled = false;
-          document.getElementById('install-button').classList.remove('hidden');
-        }
       },
 
       setupPWAInstallPrompt() {
         const installButton = document.getElementById('install-button');
         
+        // Toujours afficher le bouton d'installation
+        installButton.style.display = 'flex';
+        
         // Gestion de l'événement beforeinstallprompt
         window.addEventListener('beforeinstallprompt', (e) => {
-          console.log('beforeinstallprompt event fired');
           // Empêcher le mini-infobar de apparaître sur mobile
           e.preventDefault();
           // Stash the event so it can be triggered later.
           this.deferredPrompt = e;
-          
-          // Afficher le bouton d'installation
-          installButton.classList.remove('hidden');
-          
-          // Mettre à jour le texte du bouton
-          const installText = installButton.querySelector('span');
-          if (installText) {
-            installText.textContent = this.currentLanguage === 'fr' ? 'Installer' : 'تثبيت';
-          }
         });
 
         // Ajouter un événement au bouton d'installation
-        installButton.addEventListener('click', async () => {
-          console.log('Install button clicked');
+        installButton.addEventListener('click', () => {
           if (this.deferredPrompt) {
-            console.log('Showing install prompt');
             // Montrer l'invite d'installation
             this.deferredPrompt.prompt();
-            
             // Attendre que l'utilisateur réponde à l'invite
-            const { outcome } = await this.deferredPrompt.userChoice;
-            console.log(`User response: ${outcome}`);
-            
-            if (outcome === 'accepted') {
-              console.log('User accepted the install prompt');
-              this.showNotification(
-                this.currentLanguage === 'fr' 
-                  ? 'Application installée avec succès!' 
-                  : 'تم تثبيت التطبيق بنجاح!',
-                'success'
-              );
-              // Masquer le bouton d'installation
-              installButton.classList.add('hidden');
-            } else {
-              console.log('User dismissed the install prompt');
-              // Montrer les instructions d'installation manuelle
-              this.showInstallInstructions();
-            }
-            this.deferredPrompt = null;
+            this.deferredPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+                this.showNotification('Application installée avec succès!', 'success');
+              } else {
+                console.log('User dismissed the install prompt');
+              }
+              this.deferredPrompt = null;
+            });
           } else {
-            console.log('No deferred prompt, showing manual instructions');
             // Guide pour l'installation manuelle
             this.showInstallInstructions();
           }
@@ -1300,77 +1147,26 @@
         // Cacher le bouton si l'app est déjà installée
         window.addEventListener('appinstalled', () => {
           console.log('PWA was installed');
-          this.isAppInstalled = true;
-          installButton.classList.add('hidden');
+          installButton.style.display = 'none';
           this.deferredPrompt = null;
         });
       },
 
       showInstallInstructions() {
-        // Create modal from template
-        const template = document.getElementById('install-modal-template');
-        const modalContent = template.content.cloneNode(true);
-        document.body.appendChild(modalContent);
-        
-        const modal = document.getElementById('install-modal');
-        const installSteps = document.getElementById('install-steps');
-        
-        // Determine browser and show appropriate steps
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-        const isFirefox = typeof InstallTrigger !== 'undefined';
-        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
         
-        let steps = [];
+        let message = '';
         
-        if (isIOS || isSafari) {
-          steps = translations[this.currentLanguage].installStepsSafari;
-        } else if (isChrome) {
-          steps = translations[this.currentLanguage].installStepsChrome;
-        } else if (isFirefox) {
-          steps = translations[this.currentLanguage].installStepsFirefox;
+        if (isIOS) {
+          message = "Pour installer l'application: \n1. Appuyez sur le bouton Partager \n2. Faites défiler vers le bas \n3. Appuyez sur 'Sur l'écran d'accueil'";
+        } else if (isAndroid) {
+          message = "Pour installer l'application: \n1. Appuyez sur le menu (3 points) \n2. Sélectionnez 'Ajouter à l'écran d'accueil'";
         } else {
-          steps = translations[this.currentLanguage].installStepsGeneric;
+          message = "Pour installer l'application, utilisez l'option 'Installer' dans le menu de votre navigateur.";
         }
         
-        // Populate steps
-        installSteps.innerHTML = steps.map((step, index) => `
-          <div class="install-step">
-            <div class="step-number">${index + 1}</div>
-            <div>${step}</div>
-          </div>
-        `).join('');
-        
-        // Add event listeners
-        document.getElementById('understand-install-btn').addEventListener('click', () => {
-          modal.remove();
-        });
-        
-        document.querySelector('#install-modal .modal-close').addEventListener('click', () => {
-          modal.remove();
-        });
-        
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) {
-            modal.remove();
-          }
-        });
-        
-        // Translate modal content
-        this.translateModalContent();
-      },
-
-      translateModalContent() {
-        const modal = document.getElementById('install-modal');
-        if (!modal) return;
-        
-        const elements = modal.querySelectorAll('[data-i18n]');
-        elements.forEach(element => {
-          const key = element.getAttribute('data-i18n');
-          if (translations[this.currentLanguage][key]) {
-            element.textContent = translations[this.currentLanguage][key];
-          }
-        });
+        alert(message);
       },
 
       loadData() {
@@ -1594,7 +1390,7 @@
           const notification = document.querySelector('.notification');
           if (notification) {
             notification.remove();
-            }
+          }
         }, 3000);
       },
 
@@ -2032,38 +1828,5 @@
       AppState.init();
     });
   </script>
-  <script>
-// Vérifier si l'application peut être installée
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('install-button').classList.remove('hidden');
-});
-
-// Gestionnaire d'installation
-document.getElementById('install-button').addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      console.log('L\'utilisateur a accepté l\'installation');
-    }
-    
-    deferredPrompt = null;
-    document.getElementById('install-button').classList.add('hidden');
-  } else {
-    // Fallback pour les navigateurs qui ne supportent pas l'installation programmatique
-    alert("Pour installer l'application, utilisez le menu de votre navigateur (Options → Ajouter à l'écran d'accueil)");
-  }
-});
-
-// Masquer le bouton après installation
-window.addEventListener('appinstalled', () => {
-  document.getElementById('install-button').classList.add('hidden');
-});
-</script>
 </body>
 </html>
