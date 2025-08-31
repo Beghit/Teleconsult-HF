@@ -17,18 +17,10 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Réponse aux requêtes
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Renvoie la réponse en cache ou fetch la requête
         return response || fetch(event.request);
-      })
-      .catch(() => {
-        // Fallback pour les pages
-        if (event.request.destination === 'document') {
-          return caches.match('/index.html');
-        }
       })
   );
 });
@@ -45,11 +37,5 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-});
-
-// Gestion du message pour skipWaiting
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+  self.clients.claim();
 });
