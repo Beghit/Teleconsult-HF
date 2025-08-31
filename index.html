@@ -101,6 +101,13 @@
       font-weight: 500;
     }
 
+    /* Header Actions */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
     /* Language Toggle */
     .language-toggle {
       display: flex;
@@ -128,6 +135,27 @@
       background: var(--primary);
       color: white;
       box-shadow: 0 2px 4px rgba(26, 86, 219, 0.2);
+    }
+    
+    /* Install Button - Toujours visible */
+    #install-button {
+      padding: 0.5rem 1rem;
+      border-radius: 16px;
+      border: none;
+      background: var(--success);
+      color: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    #install-button:hover {
+      background: #0da271;
+      transform: translateY(-2px);
     }
     
     /* Navigation */
@@ -530,6 +558,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
+      position: relative;
     }
     
     .modal-close {
@@ -538,6 +567,17 @@
       font-size: 1.5rem;
       cursor: pointer;
       color: var(--muted);
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--light);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
     /* Footer */
@@ -725,8 +765,14 @@
         gap: 1rem;
       }
 
-      .language-toggle {
-        margin-top: 1rem;
+      .header-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .language-toggle, #install-button {
+        width: 100%;
+        justify-content: center;
       }
       
       .symptoms-grid {
@@ -754,9 +800,14 @@
           <div class="logo-subtitle" data-i18n="appSubtitle">Télésurveillance Cardiaque</div>
         </div>
       </div>
-      <div class="language-toggle">
-        <button class="language-btn active" data-lang="fr" aria-label="Changer la langue en français"><i class="fas fa-language"></i> FR</button>
-        <button class="language-btn" data-lang="ar" aria-label="Changer la langue en arabe"><i class="fas fa-language"></i> AR</button>
+      <div class="header-actions">
+        <div class="language-toggle">
+          <button class="language-btn active" data-lang="fr" aria-label="Changer la langue en français"><i class="fas fa-language"></i> FR</button>
+          <button class="language-btn" data-lang="ar" aria-label="Changer la langue en arabe"><i class="fas fa-language"></i> AR</button>
+        </div>
+        <button id="install-button" aria-label="Installer l'application">
+          <i class="fas fa-download"></i> Installer
+        </button>
       </div>
     </header>
 
@@ -989,7 +1040,7 @@
         symptom1: "ضيق في التنفس",
         symptom2: "وذمة الساقين",
         symptom3: "إرهاق شديد",
-        symptom4: "زيادة سريعة في الوزن",
+        symptom4: "زيادة سريعة в الوزن",
         symptom5: "سعال جاف",
         symptom6: "صعوبة التنفس عند الاستلقاء",
         submitCheckin: "إرسال المتابعة",
@@ -1015,9 +1066,9 @@
         heartRateWarning: "معدل ضربات القلب مرتفع",
         heartRateAdvice: "تجنب الكافيين، مارس تمارين التنفس العميق وتأكد من الحصول على قسط كافٍ من النوم.",
         lowHeartRateWarning: "معدل ضربات القلب منخفض",
-        lowHeartRateAdvice: "إذا كنت تشعر بالضعف أو الدوار، استشر طبيبك.",
+        lowHeartRateAdvice: "إذا كنت تشعر بالضعف или الدوار، استشر طبيبك.",
         oxygenWarning: "تشبع الأكسجين منخفض",
-        oxygenAdvice: "تأكد من التهوية الجيدة واستشر الطبيب если استمر ذلك.",
+        oxygenAdvice: "تأكد من التهوية الجيدة واستشر الطبيب إذا استمر ذلك.",
         weightGainWarning: "تم اكتشاف زيادة في الوزن",
         weightGainAdvice: "راقب نظامك الغذائي واستهلاك السوائل. اتصل بطبيبك إذا استمرت زيادة الوزن.",
         weightLossWarning: "تم اكتشاف فقدان الوزن",
@@ -1046,6 +1097,7 @@
       checkins: [],
       referenceWeight: null,
       referenceBloodPressure: { systolic: 120, diastolic: 80 },
+      deferredPrompt: null,
 
       init() {
         this.loadData();
@@ -1054,6 +1106,67 @@
         this.generateRecommendations();
         this.updateReferenceDisplay();
         this.registerServiceWorker();
+        this.setupPWAInstallPrompt();
+      },
+
+      setupPWAInstallPrompt() {
+        const installButton = document.getElementById('install-button');
+        
+        // Toujours afficher le bouton d'installation
+        installButton.style.display = 'flex';
+        
+        // Gestion de l'événement beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+          // Empêcher le mini-infobar de apparaître sur mobile
+          e.preventDefault();
+          // Stash the event so it can be triggered later.
+          this.deferredPrompt = e;
+        });
+
+        // Ajouter un événement au bouton d'installation
+        installButton.addEventListener('click', () => {
+          if (this.deferredPrompt) {
+            // Montrer l'invite d'installation
+            this.deferredPrompt.prompt();
+            // Attendre que l'utilisateur réponde à l'invite
+            this.deferredPrompt.userChoice.then((choiceResult) => {
+              if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+                this.showNotification('Application installée avec succès!', 'success');
+              } else {
+                console.log('User dismissed the install prompt');
+              }
+              this.deferredPrompt = null;
+            });
+          } else {
+            // Guide pour l'installation manuelle
+            this.showInstallInstructions();
+          }
+        });
+
+        // Cacher le bouton si l'app est déjà installée
+        window.addEventListener('appinstalled', () => {
+          console.log('PWA was installed');
+          installButton.style.display = 'none';
+          this.deferredPrompt = null;
+        });
+      },
+
+      showInstallInstructions() {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isAndroid = /Android/.test(navigator.userAgent);
+        
+        let message = '';
+        
+        if (isIOS) {
+          message = "Pour installer l'application: \n1. Appuyez sur le bouton Partager \n2. Faites défiler vers le bas \n3. Appuyez sur 'Sur l'écran d'accueil'";
+        } else if (isAndroid) {
+          message = "Pour installer l'application: \n1. Appuyez sur le menu (3 points) \n2. Sélectionnez 'Ajouter à l'écran d'accueil'";
+        } else {
+          message = "Pour installer l'application, utilisez l'option 'Installer' dans le menu de votre navigateur.";
+        }
+        
+        alert(message);
       },
 
       loadData() {
@@ -1493,7 +1606,7 @@
           if (weightDiff > 1.5) {
             statusClass = 'status-yellow';
             statusText = translations[this.currentLanguage].attention;
-          }
+            }
           
           if (weightDiff > 2) {
             statusClass = 'status-red';
