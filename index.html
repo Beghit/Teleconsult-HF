@@ -29,6 +29,7 @@
       --border: #e2e8f0;
       --input-bg: #ffffff;
       --gradient: linear-gradient(135deg, #1a56db 0%, #0c4da1 100%);
+      --install-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
     
     * {
@@ -137,12 +138,12 @@
       box-shadow: 0 2px 4px rgba(26, 86, 219, 0.2);
     }
     
-    /* Install Button - Style amélioré */
+    /* Install Button - Enhanced */
     #install-button {
       padding: 0.75rem 1.5rem;
-      border-radius: 16px;
+      border-radius: 12px;
       border: none;
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: var(--install-gradient);
       color: white;
       cursor: pointer;
       font-size: 1rem;
@@ -151,30 +152,17 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    #install-button:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
-      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+      animation: pulseInstall 2s infinite;
     }
     
     #install-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
     }
     
     #install-button:active {
       transform: translateY(0);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
     
     /* Navigation */
@@ -729,6 +717,21 @@
       100% { transform: scale(1); }
     }
     
+    @keyframes pulseInstall {
+      0% { 
+        transform: scale(1);
+        box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+      }
+      50% { 
+        transform: scale(1.03);
+        box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+      }
+      100% { 
+        transform: scale(1);
+        box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+      }
+    }
+    
     @keyframes pulseWarning {
       0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
       70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
@@ -825,7 +828,7 @@
           <button class="language-btn" data-lang="ar" aria-label="Changer la langue en arabe"><i class="fas fa-language"></i> AR</button>
         </div>
         <button id="install-button" aria-label="Installer l'application">
-          <i class="fas fa-download"></i> <span data-i18n="installApp">Installer l'App</span>
+          <i class="fas fa-download"></i> <span data-i18n="installApp">Installer</span>
         </button>
       </div>
     </header>
@@ -1042,11 +1045,7 @@
         lowOxygenAdvice: "Asseyez-vous droit, pratiquez des exercices de respiration profonde. Consultez un médecin si cela persiste.",
         severeSymptomsWarning: "Symptômes sévères détectés",
         severeSymptomsAdvice: "Ces symptômes nécessitent une consultation médicale urgente. Contactez votre médecin ou les urgences.",
-        installApp: "Installer l'App",
-        installSuccess: "Application installée avec succès!",
-        installInstructionsIOS: "Pour installer l'application: \n1. Appuyez sur le bouton Partager \n2. Faites défiler vers le bas \n3. Appuyez sur 'Sur l'écran d'accueil'",
-        installInstructionsAndroid: "Pour installer l'application: \n1. Appuyez sur le menu (3 points) \n2. Sélectionnez 'Ajouter à l'écran d'accueil'",
-        installInstructionsOther: "Pour installer l'application, utilisez l'option 'Installer' dans le menu de votre navigateur."
+        installApp: "Installer l'App"
       },
       ar: {
         appName: "حارس القلب",
@@ -1109,14 +1108,10 @@
         hypotensionWarning: "ضغط الدم منخفض",
         hypotensionAdvice: "تأكد من ترطيب جسمك بشكل صحيح وتجنب تغيير الوضعيات بشكل مفاجئ. استشر الطبيب إذا شعرت بالدوار.",
         lowOxygenWarning: "تشبع الأكسجين منخفض",
-        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب إذا استمر ذلك.",
+        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب если استمر ذلك.",
         severeSymptomsWarning: "تم اكتشاف أعراض شديدة",
         severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ.",
-        installApp: "تثبيت التطبيق",
-        installSuccess: "تم تثبيت التطبيق بنجاح!",
-        installInstructionsIOS: "لتثبيت التطبيق: \n1. انقر على زر المشاركة \n2. مرر لأسفل \n3. انقر على 'إضافة إلى الشاشة الرئيسية'",
-        installInstructionsAndroid: "لتثبيت التطبيق: \n1. انقر على القائمة (3 نقاط) \n2. اختر 'إضافة إلى الشاشة الرئيسية'",
-        installInstructionsOther: "لتثبيت التطبيق، استخدم خيار 'التثبيت' في قائمة المتصفح."
+        installApp: "تثبيت التطبيق"
       }
     };
 
@@ -1136,16 +1131,18 @@
         this.updateReferenceDisplay();
         this.registerServiceWorker();
         this.setupPWAInstallPrompt();
-        
-        // Vérifier si l'application est déjà installée
         this.checkIfAppIsInstalled();
+      },
+
+      checkIfAppIsInstalled() {
+        // Vérifier si l'application est déjà installée
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+          document.getElementById('install-button').classList.add('hidden');
+        }
       },
 
       setupPWAInstallPrompt() {
         const installButton = document.getElementById('install-button');
-        
-        // Masquer le bouton par défaut
-        installButton.style.display = 'none';
         
         // Gestion de l'événement beforeinstallprompt
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1155,7 +1152,7 @@
           this.deferredPrompt = e;
           
           // Afficher le bouton d'installation
-          installButton.style.display = 'flex';
+          installButton.classList.remove('hidden');
         });
 
         // Ajouter un événement au bouton d'installation
@@ -1167,9 +1164,7 @@
             this.deferredPrompt.userChoice.then((choiceResult) => {
               if (choiceResult.outcome === 'accepted') {
                 console.log('User accepted the install prompt');
-                this.showNotification(translations[this.currentLanguage].installSuccess, 'success');
-                // Cacher le bouton après l'installation
-                installButton.style.display = 'none';
+                this.showNotification('Application installée avec succès!', 'success');
               } else {
                 console.log('User dismissed the install prompt');
               }
@@ -1184,17 +1179,9 @@
         // Cacher le bouton si l'app est déjà installée
         window.addEventListener('appinstalled', () => {
           console.log('PWA was installed');
-          installButton.style.display = 'none';
+          installButton.classList.add('hidden');
           this.deferredPrompt = null;
         });
-      },
-      
-      checkIfAppIsInstalled() {
-        // Vérifier si l'application est déjà installée
-        if (window.matchMedia('(display-mode: standalone)').matches || 
-            window.navigator.standalone === true) {
-          document.getElementById('install-button').style.display = 'none';
-        }
       },
 
       showInstallInstructions() {
@@ -1204,11 +1191,17 @@
         let message = '';
         
         if (isIOS) {
-          message = translations[this.currentLanguage].installInstructionsIOS;
+          message = this.currentLanguage === 'fr' 
+            ? "Pour installer l'application: \n1. Appuyez sur le bouton Partager \n2. Faites défiler vers le bas \n3. Appuyez sur 'Sur l'écran d'accueil'"
+            : "لتثبيت التطبيق: \n1. اضغط على زر المشاركة \n2. مرر لأسفل \n3. اضغط على 'إلى الشاشة الرئيسية'";
         } else if (isAndroid) {
-          message = translations[this.currentLanguage].installInstructionsAndroid;
+          message = this.currentLanguage === 'fr' 
+            ? "Pour installer l'application: \n1. Appuyez sur le menu (3 points) \n2. Sélectionnez 'Ajouter à l'écran d'accueil'"
+            : "لتثبيت التطبيق: \n1. اضغط على القائمة (3 نقاط) \n2. اختر 'إضافة إلى الشاشة الرئيسية'";
         } else {
-          message = translations[this.currentLanguage].installInstructionsOther;
+          message = this.currentLanguage === 'fr' 
+            ? "Pour installer l'application, utilisez l'option 'Installer' dans le menu de votre navigateur."
+            : "لتثبيت التطبيق، استخدم خيار 'تثبيت' في قائمة المتصفح.";
         }
         
         alert(message);
@@ -1435,7 +1428,7 @@
           const notification = document.querySelector('.notification');
           if (notification) {
             notification.remove();
-          }
+            }
         }, 3000);
       },
 
