@@ -1,10 +1,8 @@
-// sw.js - Improved Service Worker
 const CACHE_NAME = 'heartguardian-v3';
 const urlsToCache = [
   './',
   './index.html',
-  './manifest.json',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
