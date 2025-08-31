@@ -1,8 +1,10 @@
-const CACHE_NAME = 'heartguardian-v2';
+// sw.js - Improved Service Worker
+const CACHE_NAME = 'heartguardian-v3';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json'
+  './',
+  './index.html',
+  './manifest.json',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
 self.addEventListener('install', (event) => {
@@ -18,13 +20,24 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Retourne le fichier en cache ou fetch depuis le réseau
-        return response || fetch(event.request);
+        if (response) {
+          return response;
+        }
+        return fetch(event.request).then(response => {
+          if(!response || response.status !== 200 || response.type !== 'basic') {
+            return response;
+          }
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME)
+            .then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          return response;
+        });
       })
       .catch(() => {
-        // Fallback pour les pages - retourne index.html pour les routes
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+        if (event.request.url.indexOf('.html') > -1) {
+          return caches.match('./index.html');
         }
       })
   );
