@@ -1068,7 +1068,7 @@
         lowHeartRateWarning: "Votre fréquence cardiaque est basse",
         lowHeartRateAdvice: "Si vous vous sentez faible ou étourdi, consultez votre médecin.",
         oxygenWarning: "Votre saturation en oxygène est basse",
-        oxygenAdvice: "Assurez-vous d'avoir une bonne ventilation et consultez un médecin si cela persiste.",
+        oxygenAdvice: "Assurez-vous d'avoir une bonne ventilation et consultez un médecin if cela persiste.",
         weightGainWarning: "Prise de poids détectée",
         weightGainAdvice: "Surveillez votre alimentation et votre consommation de liquides. Contactez votre médecin si la prise de poids se poursuit.",
         weightLossWarning: "Perte de poids détectée",
@@ -1149,7 +1149,7 @@
         recommendationTitle: "توصية",
         systolicWarning: "ضغط الدم الانقباضي مرتفع",
         systolicAdvice: "قلل من تناول الملح، مارس تمارين معتدلة واستشر طبيبك إذا استمر ذلك.",
-        diastolicWarning: "ضغط الدم الانبساطي مرتفع",
+        diastolicWarning: "ض压力 الدم الانبساطي مرتفع",
         diastolicAdvice: "تجنب التوتر، مارس الاسترخاء وراقب ضغطك بانتظام.",
         heartRateWarning: "معدل ضربات القلب مرتفع",
         heartRateAdvice: "تجنب الكافيين، مارس تمارين التنفس العميق وتأكد من الحصول على قسط كافٍ من النوم.",
@@ -1173,7 +1173,7 @@
         hypotensionWarning: "ضغط الدم منخفض",
         hypotensionAdvice: "تأكد من ترطيب جسمك بشكل صحيح وتجنب تغيير الوضعيات بشكل مفاجئ. استشر الطبيب إذا شعرت بالدوار.",
         lowOxygenWarning: "تشبع الأكسجين منخفض",
-        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب если استمر ذلك.",
+        lowOxygenAdvice: "اجلس بشكل مستقيم، مارس تمارين التنفس العميق. استشر الطبيب إذا استمر ذلك.",
         severeSymptomsWarning: "تم اكتشاف أعراض شديدة",
         severeSymptomsAdvice: "هذه الأعراض تتطلب استشارة طبية عاجلة. اتصل بطبيبك أو بالطوارئ.",
         installApp: "تثبيت التطبيق",
@@ -1209,6 +1209,7 @@
       referenceWeight: null,
       referenceBloodPressure: { systolic: 120, diastolic: 80 },
       deferredPrompt: null,
+      isAppInstalled: false,
 
       init() {
         this.loadData();
@@ -1219,15 +1220,24 @@
         this.registerServiceWorker();
         this.setupPWAInstallPrompt();
         this.checkIfAppIsInstalled();
+        
+        // Vérifier périodiquement si l'app est installée
+        setInterval(() => this.checkIfAppIsInstalled(), 3000);
       },
 
       checkIfAppIsInstalled() {
         // Vérifier si l'application est déjà installée
-        if (window.matchMedia('(display-mode: standalone)').matches || 
-            window.matchMedia('(display-mode: fullscreen)').matches ||
-            window.matchMedia('(display-mode: minimal-ui)').matches ||
-            (navigator.standalone === true)) {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                            window.matchMedia('(display-mode: fullscreen)').matches ||
+                            window.matchMedia('(display-mode: minimal-ui)').matches ||
+                            (navigator.standalone === true);
+        
+        if (isStandalone && !this.isAppInstalled) {
+          this.isAppInstalled = true;
           document.getElementById('install-button').classList.add('hidden');
+        } else if (!isStandalone && this.isAppInstalled) {
+          this.isAppInstalled = false;
+          document.getElementById('install-button').classList.remove('hidden');
         }
       },
 
@@ -1236,6 +1246,7 @@
         
         // Gestion de l'événement beforeinstallprompt
         window.addEventListener('beforeinstallprompt', (e) => {
+          console.log('beforeinstallprompt event fired');
           // Empêcher le mini-infobar de apparaître sur mobile
           e.preventDefault();
           // Stash the event so it can be triggered later.
@@ -1253,11 +1264,16 @@
 
         // Ajouter un événement au bouton d'installation
         installButton.addEventListener('click', async () => {
+          console.log('Install button clicked');
           if (this.deferredPrompt) {
+            console.log('Showing install prompt');
             // Montrer l'invite d'installation
             this.deferredPrompt.prompt();
+            
             // Attendre que l'utilisateur réponde à l'invite
             const { outcome } = await this.deferredPrompt.userChoice;
+            console.log(`User response: ${outcome}`);
+            
             if (outcome === 'accepted') {
               console.log('User accepted the install prompt');
               this.showNotification(
@@ -1266,13 +1282,16 @@
                   : 'تم تثبيت التطبيق بنجاح!',
                 'success'
               );
+              // Masquer le bouton d'installation
+              installButton.classList.add('hidden');
             } else {
               console.log('User dismissed the install prompt');
-              // Show manual installation guide
+              // Montrer les instructions d'installation manuelle
               this.showInstallInstructions();
             }
             this.deferredPrompt = null;
           } else {
+            console.log('No deferred prompt, showing manual instructions');
             // Guide pour l'installation manuelle
             this.showInstallInstructions();
           }
@@ -1281,6 +1300,7 @@
         // Cacher le bouton si l'app est déjà installée
         window.addEventListener('appinstalled', () => {
           console.log('PWA was installed');
+          this.isAppInstalled = true;
           installButton.classList.add('hidden');
           this.deferredPrompt = null;
         });
@@ -1299,10 +1319,11 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
         const isFirefox = typeof InstallTrigger !== 'undefined';
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
         
         let steps = [];
         
-        if (isIOS) {
+        if (isIOS || isSafari) {
           steps = translations[this.currentLanguage].installStepsSafari;
         } else if (isChrome) {
           steps = translations[this.currentLanguage].installStepsChrome;
